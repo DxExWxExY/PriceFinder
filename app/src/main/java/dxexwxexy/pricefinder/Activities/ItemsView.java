@@ -130,21 +130,21 @@ public class ItemsView extends AppCompatActivity {
         initRecyclerView();
     }
 
-    public class ItemListView extends ArrayAdapter<Item> {
+    /*public class ItemListView extends ArrayAdapter<Item> {
 
         class ViewHolder {
 
-            /**
+            *//**
              * Fields used by the item_container layout.
-             */
+             *//*
             TextView name, initialPrice, currentPrice, difference;
             ImageView itemIcon;
             ConstraintLayout parentLayout;
 
-            /***
+            *//***
              * Default Constructor
              * @param itemView View Containing the holder views.
-             */
+             *//*
             ViewHolder(View itemView) {
                 name = itemView.findViewById(R.id.item_name);
                 initialPrice = itemView.findViewById(R.id.initial_price);
@@ -161,12 +161,12 @@ public class ItemsView extends AppCompatActivity {
             }
         }
 
-        /**
+        *//**
          * Constructor
          *
          * @param context  The current context.
          * @param items  The objects to represent in the ListView.
-         */
+         *//*
         public ItemListView(@NonNull Context context, @NonNull List<Item> items) {
             super(context, R.layout.item_container, items);
         }
@@ -181,7 +181,7 @@ public class ItemsView extends AppCompatActivity {
 
             return convertView;
         }
-    }
+    }*/
 
     /**
      * Class required to use a RecyclerViewer.
