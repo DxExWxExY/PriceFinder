@@ -3,6 +3,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="dxexwxexy.pricefinder.Activities.ItemsView">
     <item
-        android:id="@+id/delete_selection"
-        android:title="@string/delete" />
+        android:id="@+id/exit"
+        android:title="Exit" />
 </menu>

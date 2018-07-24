@@ -25,6 +25,8 @@ import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 
+import org.w3c.dom.Text;
+
 import java.util.ArrayList;
 
 import dxexwxexy.pricefinder.Data.Item;
@@ -52,6 +54,25 @@ public class ItemsView extends AppCompatActivity {
         initUI();
     }
 
+//---------------------------------------------------------------------------------------------------------
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.manage_items, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) { switch(item.getItemId()) {
+
+        case R.id.exit:
+            finish();
+            return(true);
+
+    }
+        return(super.onOptionsItemSelected(item));
+    }
+//---------------------------------------------------------------------------------------------------------
 
 
 
@@ -155,6 +176,8 @@ public class ItemsView extends AppCompatActivity {
             @Override
             public void onDestroyActionMode(android.support.v7.view.ActionMode mode) {
 
+                notifyDataSetChanged();
+                Toast.makeText(ItemsView.this, "OnDesstroy!",Toast.LENGTH_SHORT).show();
             }
         };
 
@@ -210,6 +233,7 @@ public class ItemsView extends AppCompatActivity {
         @Override
         public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
             ViewHolder content = (ViewHolder) holder;
+            content.setItem(items.get(position));
             content.name.setText(items.get(position).getName());
             content.initialPrice.setText("$"+items.get(position).getInitialPrice());
             content.currentPrice.setText("$"+items.get(position).getCurrentPrice());
@@ -231,14 +255,14 @@ public class ItemsView extends AppCompatActivity {
                 selectionMode = true;
                 ((AppCompatActivity) view.getContext()).startSupportActionMode(callback);
                 selectedItems.add(items.get(position));
-                Toast.makeText(ItemsView.this, position, Toast.LENGTH_SHORT).show();
-                content.name.setBackgroundColor(getColor(R.color.red));
+                Toast.makeText(ItemsView.this, "algo", Toast.LENGTH_SHORT).show();
+                content.itemView.setBackgroundColor(getColor(R.color.grey));
                 return true;
             });
             content.parentLayout.setOnClickListener(e -> {
                 if (selectionMode) {
                     selectedItems.add(items.get(position));
-                    content.name.setBackgroundColor(getColor(R.color.red));
+                    content.itemView.setBackgroundColor(getColor(R.color.grey));
                 } else {
 
                 }
@@ -291,6 +315,7 @@ public class ItemsView extends AppCompatActivity {
             TextView name, initialPrice, currentPrice, difference;
             ImageView itemIcon;
             ConstraintLayout parentLayout;
+            Item item;
 
             /***
              * Default Constructor
@@ -304,6 +329,10 @@ public class ItemsView extends AppCompatActivity {
                 difference = itemView.findViewById(R.id.difference);
                 itemIcon = itemView.findViewById(R.id.item_icon);
                 parentLayout = itemView.findViewById(R.id.item_holder);
+            }
+
+            public void setItem(Item item) {
+                this.item = item;
             }
         }
     }
