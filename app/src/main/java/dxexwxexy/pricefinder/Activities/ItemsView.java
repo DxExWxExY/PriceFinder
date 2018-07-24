@@ -16,7 +16,10 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.SparseBooleanArray;
+import android.view.ActionMode;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -31,6 +34,7 @@ import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
 
 import dxexwxexy.pricefinder.Data.Item;
 import dxexwxexy.pricefinder.R;
@@ -144,7 +148,39 @@ public class ItemsView extends AppCompatActivity {
          * Fields used by the RecyclerViewer.
          */
         private ArrayList<Item> items;
-        private SparseBooleanArray mSelectedItemsIds;
+        private ArrayList<Integer> selectedItems;
+        private boolean selectionMode;
+        private android.support.v7.view.ActionMode.Callback callback = new android.support.v7.view.ActionMode.Callback() {
+            /**
+             * Called when action mode is first created. The menu supplied will be used to
+             * generate action buttons for the action mode.
+             *
+             * @param mode ActionMode being created
+             * @param menu Menu used to populate action buttons
+             * @return true if the action mode should be created, false if entering this
+             * mode should be aborted.
+             */
+            @Override
+            public boolean onCreateActionMode(android.support.v7.view.ActionMode mode, Menu menu) {
+                mode.getMenuInflater().inflate(R.menu.manage_items, menu);
+                return true;
+            }
+
+            @Override
+            public boolean onPrepareActionMode(android.support.v7.view.ActionMode mode, Menu menu) {
+                return false;
+            }
+
+            @Override
+            public boolean onActionItemClicked(android.support.v7.view.ActionMode mode, MenuItem item) {
+                return false;
+            }
+
+            @Override
+            public void onDestroyActionMode(android.support.v7.view.ActionMode mode) {
+
+            }
+        };
 
         /***
          * Default Constructor
@@ -152,6 +188,8 @@ public class ItemsView extends AppCompatActivity {
          */
         RecyclerViewAdapter(ArrayList<Item> items) {
             this.items = items;
+            this.selectedItems = new ArrayList<>();
+            this.selectionMode = false;
         }
 
         /**
@@ -193,6 +231,21 @@ public class ItemsView extends AppCompatActivity {
                 content.difference.setBackgroundColor(getColor(R.color.red));
                 content.difference.setText("+"+items.get(position).getDifference()+"%");
             }
+            content.parentLayout.setOnLongClickListener(view -> {
+                selectionMode = true;
+                ((AppCompatActivity) view.getContext()).startSupportActionMode(callback);
+                selectedItems.add(position);
+                content.name.setBackgroundColor(getColor(R.color.red));
+                return true;
+            });
+            content.parentLayout.setOnClickListener(e -> {
+                if (selectionMode) {
+                    selectedItems.add(position);
+                    content.name.setBackgroundColor(getColor(R.color.red));
+                } else {
+
+                }
+            });
         }
 
         /**
@@ -202,6 +255,13 @@ public class ItemsView extends AppCompatActivity {
         @Override
         public int getItemCount() {
             return items == null ? 0 : items.size();
+        }
+
+        public void deleteSelection() {
+            for (int i: selectedItems) {
+                items.remove(i);
+            }
+            selectedItems.clear();
         }
 
         /**
@@ -228,13 +288,6 @@ public class ItemsView extends AppCompatActivity {
                 difference = itemView.findViewById(R.id.difference);
                 itemIcon = itemView.findViewById(R.id.item_icon);
                 parentLayout = itemView.findViewById(R.id.item_holder);
-                parentLayout.setOnLongClickListener(view -> {
-                    ((AppCompatActivity) view.getContext()).startSupportActionMode(new ManagementMenu());
-                    return true;
-                });
-                parentLayout.setOnClickListener(e -> {
-                    // TODO: 7/23/2018 intent
-                });
             }
         }
     }
