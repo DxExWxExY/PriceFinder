@@ -80,6 +80,15 @@ public class Item implements Parcelable {
         return url;
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof Item) {
+            Item that = (Item) obj;
+            return this.name.equals(that.name) && this.url.equals(that.url);
+        }
+        return false;
+    }
+
     /**
      * Updates item current price using PriceFinder.
      */

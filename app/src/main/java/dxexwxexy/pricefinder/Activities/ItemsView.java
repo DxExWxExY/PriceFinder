@@ -8,6 +8,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.view.menu.MenuView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -20,6 +21,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 
@@ -122,7 +124,7 @@ public class ItemsView extends AppCompatActivity {
          * Fields used by the RecyclerViewer.
          */
         private ArrayList<Item> items;
-        private ArrayList<Integer> selectedItems;
+        private ArrayList<Item> selectedItems;
         private boolean selectionMode;
         private android.support.v7.view.ActionMode.Callback callback = new android.support.v7.view.ActionMode.Callback() {
             /**
@@ -228,13 +230,14 @@ public class ItemsView extends AppCompatActivity {
             content.parentLayout.setOnLongClickListener(view -> {
                 selectionMode = true;
                 ((AppCompatActivity) view.getContext()).startSupportActionMode(callback);
-                selectedItems.add(position);
+                selectedItems.add(items.get(position));
+                Toast.makeText(ItemsView.this, position, Toast.LENGTH_SHORT).show();
                 content.name.setBackgroundColor(getColor(R.color.red));
                 return true;
             });
             content.parentLayout.setOnClickListener(e -> {
                 if (selectionMode) {
-                    selectedItems.add(position);
+                    selectedItems.add(items.get(position));
                     content.name.setBackgroundColor(getColor(R.color.red));
                 } else {
 
@@ -252,8 +255,12 @@ public class ItemsView extends AppCompatActivity {
         }
 
         public void deleteSelection() {
-            for (int i: selectedItems) {
-                items.remove(i);
+            for (Item selected: selectedItems) {
+                for (Item item: items) {
+                    if (selected.equals(item)) {
+                        items.remove(selected);
+                    }
+                }
             }
             selectedItems.clear();
         }
