@@ -1,6 +1,7 @@
 package dxexwxexy.pricefinder.Activities;
 
 import android.annotation.SuppressLint;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
@@ -175,7 +176,10 @@ public class ItemsView extends AppCompatActivity {
 
             @Override
             public void onDestroyActionMode(android.support.v7.view.ActionMode mode) {
-
+                for (Item item :
+                        selectedItems) {
+                    item.setSelected(false);
+                }
                 notifyDataSetChanged();
                 Toast.makeText(ItemsView.this, "OnDesstroy!",Toast.LENGTH_SHORT).show();
             }
@@ -234,6 +238,7 @@ public class ItemsView extends AppCompatActivity {
         public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
             ViewHolder content = (ViewHolder) holder;
             content.setItem(items.get(position));
+            content.itemView.setBackgroundColor(content.item.getIsSelected() ? Color.GRAY : Color.WHITE);
             content.name.setText(items.get(position).getName());
             content.initialPrice.setText("$"+items.get(position).getInitialPrice());
             content.currentPrice.setText("$"+items.get(position).getCurrentPrice());
@@ -255,18 +260,24 @@ public class ItemsView extends AppCompatActivity {
                 selectionMode = true;
                 ((AppCompatActivity) view.getContext()).startSupportActionMode(callback);
                 selectedItems.add(items.get(position));
-                Toast.makeText(ItemsView.this, "algo", Toast.LENGTH_SHORT).show();
-                content.itemView.setBackgroundColor(getColor(R.color.grey));
+//                Toast.makeText(ItemsView.this, "algo", Toast.LENGTH_SHORT).show();
+//                content.itemView.setBackgroundColor(getColor(R.color.grey));
+                content.item.setSelected(!content.item.getIsSelected());
+                content.itemView.setBackgroundColor(content.item.getIsSelected() ? Color.GRAY : Color.WHITE);
                 return true;
             });
             content.parentLayout.setOnClickListener(e -> {
                 if (selectionMode) {
                     selectedItems.add(items.get(position));
-                    content.itemView.setBackgroundColor(getColor(R.color.grey));
+                    content.item.setSelected(!content.item.getIsSelected());
+                    content.itemView.setBackgroundColor(content.item.getIsSelected() ? Color.GRAY : Color.WHITE);
+                    notifyDataSetChanged();
                 } else {
 
                 }
             });
+
+
         }
 
         /**
