@@ -15,6 +15,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -143,6 +144,7 @@ public class ItemsView extends AppCompatActivity {
          * Fields used by the RecyclerViewer.
          */
         private ArrayList<Item> items;
+        private SparseBooleanArray mSelectedItemsIds;
 
         /***
          * Default Constructor
@@ -201,6 +203,61 @@ public class ItemsView extends AppCompatActivity {
         public int getItemCount() {
             return items == null ? 0 : items.size();
         }
+
+
+        //Delete selected rows
+        public void deleteRows() {
+            SparseBooleanArray selected = adapter
+                    .getSelectedIds();//Get selected ids
+
+            //Loop all selected ids
+            for (int i = (selected.size() - 1); i >= 0; i--) {
+                if (selected.valueAt(i)) {
+                    //If current id is selected remove the item via key
+                    items.remove(selected.keyAt(i));
+                    adapter.notifyDataSetChanged();//notify adapter
+
+                }
+            }
+//            Toast.makeText(getActivity(), selected.size() + " item deleted.", Toast.LENGTH_SHORT).show();//Show Toast
+//            mActionMode.finish();//Finish action mode after use
+
+        }
+
+        //Toggle selection methods
+        public void toggleSelection(int position) {
+            selectView(position, !mSelectedItemsIds.get(position));
+        }
+
+
+        //Remove selected selections
+        public void removeSelection() {
+            mSelectedItemsIds = new SparseBooleanArray();
+            notifyDataSetChanged();
+        }
+
+
+        //Put or delete selected position into SparseBooleanArray
+        public void selectView(int position, boolean value) {
+            if (value)
+                mSelectedItemsIds.put(position, value);
+            else
+                mSelectedItemsIds.delete(position);
+
+            notifyDataSetChanged();
+        }
+
+        //Get total selected count
+        public int getSelectedCount() {
+            return mSelectedItemsIds.size();
+        }
+
+        //Return all selected ids
+        public SparseBooleanArray getSelectedIds() {
+            return mSelectedItemsIds;
+        }
+
+
 
         /**
          * Instance used by RecyclerViewer.

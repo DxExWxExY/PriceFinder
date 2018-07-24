@@ -5,4 +5,8 @@
     <string name="current_price">Current Price</string>
     <string name="difference">Difference</string>
     <string name="menu_refresh">menu_refresh</string>
+    <!--  Action Mode Menu Items -->
+    <string name="delete">Delete</string>
+    <string name="copy">Copy</string>
+    <string name="edit">Forward</string>
 </resources>
