@@ -228,7 +228,13 @@ public class ItemsView extends AppCompatActivity {
                 difference = itemView.findViewById(R.id.difference);
                 itemIcon = itemView.findViewById(R.id.item_icon);
                 parentLayout = itemView.findViewById(R.id.item_holder);
-                registerForContextMenu(parentLayout);
+                parentLayout.setOnLongClickListener(view -> {
+                    ((AppCompatActivity) view.getContext()).startSupportActionMode(new ManagementMenu());
+                    return true;
+                });
+                parentLayout.setOnClickListener(e -> {
+                    // TODO: 7/23/2018 intent
+                });
             }
         }
     }
