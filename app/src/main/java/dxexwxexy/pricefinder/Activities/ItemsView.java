@@ -1,40 +1,29 @@
 package dxexwxexy.pricefinder.Activities;
 
 import android.annotation.SuppressLint;
-import android.app.Dialog;
-import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.SparseBooleanArray;
-import android.view.ActionMode;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
-import java.util.List;
-import java.util.Timer;
 
 import dxexwxexy.pricefinder.Data.Item;
 import dxexwxexy.pricefinder.R;
@@ -44,7 +33,6 @@ public class ItemsView extends AppCompatActivity {
     /***
      * Fields used for UI manipulation.
      */
-    private ArrayList<Item> items;
     private SwipeRefreshLayout refreshLayout;
     private RecyclerViewAdapter adapter;
 
@@ -58,29 +46,19 @@ public class ItemsView extends AppCompatActivity {
         setContentView(R.layout.activity_items_view);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        initItems();
-        initRecyclerView();
+        initRecyclerView(null);
         initUI();
     }
 
 
-    /***
-     * Method to simulate data read.
-     */
-    private void initItems() {
-        items = new ArrayList<>();
-        //Sample
-        items.add(new Item("GTX 1080 Ti", "https://images.nvidia.com/" +
-                "geforce-com/international/images/nvidia-geforce-gtx-1080-ti/" +
-                "GeForce_GTX_1080ti_3qtr_top_left.png",499.99));
-    }
+
 
     /**
      * Initializes the RecyclerViewer for the items of operations.
      */
-    private void initRecyclerView() {
+    private void initRecyclerView(ArrayList<Item> items) {
         RecyclerView recyclerView = findViewById(R.id.items_list);
-        adapter = new RecyclerViewAdapter(items);
+        adapter = (items == null) ? new RecyclerViewAdapter() : new RecyclerViewAdapter(items);
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
     }
@@ -101,17 +79,14 @@ public class ItemsView extends AppCompatActivity {
             AlertDialog dialog = mBuilder.create();
             dialog.show();
             add.setOnClickListener(v -> {
-                items.add(new Item(name.getText().toString(), url.getText().toString(), Double.parseDouble(price.getText().toString())));
+                adapter.addItem(new Item(name.getText().toString(), url.getText().toString(), Double.parseDouble(price.getText().toString())));
                 dialog.dismiss();
             });
         });
         refreshLayout = findViewById(R.id.swipe_refresh);
         refreshLayout.setOnRefreshListener(() -> {
             refreshLayout.setRefreshing(true);
-            for (Item item : items) {
-                item.updateCurrentPrice();
-            }
-            adapter.notifyDataSetChanged();
+            adapter.refresh();
             refreshLayout.setRefreshing(false);
         });
     }
@@ -123,7 +98,7 @@ public class ItemsView extends AppCompatActivity {
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putParcelableArrayList("items", items);
+        outState.putParcelableArrayList("items", adapter.getItems());
     }
 
     /***
@@ -133,8 +108,7 @@ public class ItemsView extends AppCompatActivity {
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
-        items = savedInstanceState.getParcelableArrayList("items");
-//        initRecyclerView();
+        initRecyclerView(savedInstanceState.getParcelableArrayList("items"));
     }
 
 
@@ -184,12 +158,32 @@ public class ItemsView extends AppCompatActivity {
 
         /***
          * Default Constructor
-         * @param items ArrayList containing instances of Item.
+         */
+        RecyclerViewAdapter() {
+            initItems();
+            this.selectedItems = new ArrayList<>();
+            this.selectionMode = false;
+        }
+
+        /**
+         * Constructor for restoring to previous state.
+         * @param items Previously created list.
          */
         RecyclerViewAdapter(ArrayList<Item> items) {
             this.items = items;
             this.selectedItems = new ArrayList<>();
             this.selectionMode = false;
+        }
+
+        /***
+         * Method to simulate data read.
+         */
+        private void initItems() {
+            items = new ArrayList<>();
+            //Sample
+            items.add(new Item("GTX 1080 Ti", "https://images.nvidia.com/" +
+                    "geforce-com/international/images/nvidia-geforce-gtx-1080-ti/" +
+                    "GeForce_GTX_1080ti_3qtr_top_left.png",499.99));
         }
 
         /**
@@ -262,6 +256,21 @@ public class ItemsView extends AppCompatActivity {
                 items.remove(i);
             }
             selectedItems.clear();
+        }
+
+        public void addItem(Item item) {
+            items.add(item);
+        }
+
+        public void refresh() {
+            for (Item item : items) {
+                item.updateCurrentPrice();
+            }
+            notifyDataSetChanged();
+        }
+
+        public ArrayList<Item> getItems() {
+            return items;
         }
 
         /**
