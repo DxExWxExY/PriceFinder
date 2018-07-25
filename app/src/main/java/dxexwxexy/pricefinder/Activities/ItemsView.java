@@ -52,6 +52,8 @@ public class ItemsView extends AppCompatActivity {
         setSupportActionBar(toolbar);
         initRecyclerView(null);
         initUI();
+
+
     }
 
     @Override
@@ -245,9 +247,7 @@ public class ItemsView extends AppCompatActivity {
         private void initItems() {
             items = new ArrayList<>();
             //Sample
-            items.add(new Item("GTX 1080 Ti", "https://images.nvidia.com/" +
-                    "geforce-com/international/images/nvidia-geforce-gtx-1080-ti/" +
-                    "GeForce_GTX_1080ti_3qtr_top_left.png",499.99));
+            items.add(new Item("GTX 1080 Ti", "https://my.utep.edu/My",499.99));
         }
 
         /**
@@ -305,7 +305,7 @@ public class ItemsView extends AppCompatActivity {
                 } else {
 
                     Intent intent = new Intent(ItemsView.this, WebViewActivity.class);
-//                    intent.putExtra("items", ;
+                    intent.putExtra("items", content.item.getURL());
                     startActivity(intent);
 
                     // TODO: 7/24/2018 Activity
@@ -314,6 +314,8 @@ public class ItemsView extends AppCompatActivity {
 
 
         }
+
+
 
         /**
          * {@inheritDoc}
@@ -396,4 +398,5 @@ public class ItemsView extends AppCompatActivity {
             }
         }
     }
+
 }
