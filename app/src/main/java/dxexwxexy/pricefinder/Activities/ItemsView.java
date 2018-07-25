@@ -182,7 +182,7 @@ public class ItemsView extends AppCompatActivity {
                 switch (item.getItemId()) {
                     case R.id.edit:
                         AlertDialog.Builder alertBuilder = new AlertDialog.Builder(ItemsView.this);
-                        @SuppressLint("InflateParams") View view = getLayoutInflater().inflate(R.layout.edit_dialog,null);
+                        View view = getLayoutInflater().inflate(R.layout.edit_dialog, null, true);
                         EditText editName = view.findViewById(R.id.edit_item_name);
                         EditText editPrice = view.findViewById(R.id.edit_price);
                         EditText editURL = view.findViewById(R.id.edit_url);

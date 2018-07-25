@@ -8,6 +8,11 @@
         android:title="Back"
         app:showAsAction="always" />
     <item
+        android:id="@+id/share"
+        android:icon="@drawable/ic_share"
+        android:title="Share"
+        app:showAsAction="always" />
+    <item
         android:id="@+id/copy"
         android:icon="@drawable/ic_copy"
         android:title="Copy Link"

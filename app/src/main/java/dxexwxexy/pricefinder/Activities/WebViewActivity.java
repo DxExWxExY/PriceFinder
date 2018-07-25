@@ -32,7 +32,9 @@ public class WebViewActivity extends AppCompatActivity {
         webView.setWebViewClient(new WebViewClient());
         WebSettings settings = webView.getSettings();
         settings.setJavaScriptEnabled(true);
-        webView.loadUrl(product);
+        if (savedInstanceState == null) {
+            webView.loadUrl(product);
+        }
         android.support.v7.widget.Toolbar toolbar = findViewById(R.id.navigation);
         setSupportActionBar(toolbar);
         setTitle("");
@@ -65,6 +67,14 @@ public class WebViewActivity extends AppCompatActivity {
                 android.content.ClipData clip = android.content.ClipData.newPlainText("Link Copied", webView.getUrl());
                 assert clipboard != null;
                 clipboard.setPrimaryClip(clip);
+            case R.id.share:
+                try {
+                    Intent i = new Intent(Intent.ACTION_SEND);
+                    i.setType("text/plain");
+                    i.putExtra(Intent.EXTRA_SUBJECT, "Item URL");
+                    i.putExtra(Intent.EXTRA_TEXT, "Check This Out!\n" + webView.getUrl());
+                    startActivity(Intent.createChooser(i, "Pick an App"));
+                } catch(Exception ignored) { }
                 return true;
         }
         return false;
@@ -77,5 +87,19 @@ public class WebViewActivity extends AppCompatActivity {
         } else {
             finish();
         }
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState )
+    {
+        super.onSaveInstanceState(outState);
+        webView.saveState(outState);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState)
+    {
+        super.onRestoreInstanceState(savedInstanceState);
+        webView.restoreState(savedInstanceState);
     }
 }
