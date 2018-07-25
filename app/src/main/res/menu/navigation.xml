@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/back"
+        android:icon="@drawable/ic_back"
+        android:title="Back"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/copy"
+        android:icon="@drawable/ic_copy"
+        android:title="Copy Link"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/reload"
+        android:icon="@drawable/ic_refresh"
+        android:title="Reload"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/foward"
+        android:icon="@drawable/ic_forward"
+        android:title="Forward"
+        app:showAsAction="always" />
+</menu>

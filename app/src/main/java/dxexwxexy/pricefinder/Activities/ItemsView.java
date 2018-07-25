@@ -247,7 +247,9 @@ public class ItemsView extends AppCompatActivity {
         private void initItems() {
             items = new ArrayList<>();
             //Sample
-            items.add(new Item("GTX 1080 Ti", "https://my.utep.edu/My",499.99));
+            items.add(new Item("GTX 1080 Ti", "https://images.nvidia.com/" +
+                    "geforce-com/international/images/nvidia-geforce-gtx-1080-ti/" +
+                    "GeForce_GTX_1080ti_3qtr_top_left.png",499.99));
         }
 
         /**
@@ -303,19 +305,14 @@ public class ItemsView extends AppCompatActivity {
                     content.item.setSelected(!content.item.getIsSelected());
                     content.itemView.setBackgroundColor(content.item.getIsSelected() ? Color.GRAY : Color.WHITE);
                 } else {
-
                     Intent intent = new Intent(ItemsView.this, WebViewActivity.class);
-                    intent.putExtra("items", content.item.getURL());
+                    intent.putExtra("items", content.item.getSite());
                     startActivity(intent);
-
-                    // TODO: 7/24/2018 Activity
                 }
             });
 
 
         }
-
-
 
         /**
          * {@inheritDoc}

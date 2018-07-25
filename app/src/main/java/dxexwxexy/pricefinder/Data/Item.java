@@ -19,6 +19,10 @@ public class Item implements Parcelable, Comparable<Item> {
     private static PriceFinder priceFinder;
     private Boolean isSelected;
 
+    /**
+     * Fields for sorting and website.
+     */
+    private static final String SITE = "https://www.amazon.com/s/ref=nb_sb_noss_2?url=search-alias%3Daps&field-keywords=";
     public static final Comparator<Item> COMPARE_BY_NAME = (a, b) -> a.getName().compareTo(b.getName());
     public static final Comparator<Item> COMPARE_BY_DIFF = (a, b) -> a.getDifference().compareTo(b.getDifference());
     public static final Comparator<Item> COMPARE_BY_CURR = (a, b) -> a.getCurrentPrice().compareTo(b.getCurrentPrice());
@@ -66,10 +70,6 @@ public class Item implements Parcelable, Comparable<Item> {
         }
     };
 
-    public void setSelected(Boolean isSelected) {
-        this.isSelected = isSelected;
-    }
-
     public Boolean getIsSelected() {
         return isSelected;
     }
@@ -95,6 +95,10 @@ public class Item implements Parcelable, Comparable<Item> {
 
     public String getURL() {
         return url;
+    }
+
+    public String getSite() {
+        return SITE+getName().replace(' ', '+');
     }
 
     @Override
@@ -154,6 +158,10 @@ public class Item implements Parcelable, Comparable<Item> {
 
     public void setURL(String url) {
         this.url = url;
+    }
+
+    public void setSelected(Boolean isSelected) {
+        this.isSelected = isSelected;
     }
 
     /**
