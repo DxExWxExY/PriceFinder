@@ -53,7 +53,7 @@ public class ItemsView extends AppCompatActivity {
     }
 
 //---------------------------------------------------------------------------------------------------------
-    /*@Override
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.manage_items, menu);
@@ -69,7 +69,7 @@ public class ItemsView extends AppCompatActivity {
 
     }
         return(super.onOptionsItemSelected(item));
-    }*/
+    }
 //---------------------------------------------------------------------------------------------------------
 
 
@@ -208,7 +208,6 @@ public class ItemsView extends AppCompatActivity {
                     item.setSelected(false);
                 }
                 notifyDataSetChanged();
-                Toast.makeText(ItemsView.this, "OnDestroy!",Toast.LENGTH_SHORT).show();
                 enableRefresh();
                 selectionMode = false;
             }
@@ -288,14 +287,12 @@ public class ItemsView extends AppCompatActivity {
             content.parentLayout.setOnLongClickListener(view -> {
                 selectionMode = true;
                 ((AppCompatActivity) view.getContext()).startSupportActionMode(callback);
-                selectedItems.add(items.get(position));
-                content.item.setSelected(!content.item.getIsSelected());
+                content.item.setSelected(true);
                 content.itemView.setBackgroundColor(content.item.getIsSelected() ? Color.GRAY : Color.WHITE);
                 return true;
             });
             content.parentLayout.setOnClickListener(e -> {
                 if (selectionMode) {
-                    selectedItems.add(items.get(position));
                     content.item.setSelected(!content.item.getIsSelected());
                     content.itemView.setBackgroundColor(content.item.getIsSelected() ? Color.GRAY : Color.WHITE);
                 } else {
@@ -317,8 +314,11 @@ public class ItemsView extends AppCompatActivity {
 
         public void deleteSelection() {
             for (Item item : items) {
-                if (item.)
+                if (item.getIsSelected()) {
+                    selectedItems.add(item);
+                }
             }
+            items.removeAll(selectedItems);
             selectedItems.clear();
         }
 

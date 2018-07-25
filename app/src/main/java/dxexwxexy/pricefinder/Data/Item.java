@@ -15,7 +15,7 @@ public class Item implements Parcelable {
     private double initialPrice;
     private double currentPrice;
     private static PriceFinder priceFinder;
-    private static Boolean isSelected;
+    private Boolean isSelected;
 
     /**
      * Default constructor.
@@ -61,10 +61,10 @@ public class Item implements Parcelable {
     };
 
     public void setSelected(Boolean isSelected) {
-        Item.isSelected = isSelected;
+        this.isSelected = isSelected;
     }
 
-    public static Boolean getIsSelected() {
+    public Boolean getIsSelected() {
         return isSelected;
     }
 
