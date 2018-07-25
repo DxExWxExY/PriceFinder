@@ -1,9 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
-        android:id="@+id/Sort_Items"
-        android:title="sort" />
+        android:id="@+id/sort_name"
+        android:title="Sort by Name"
+        android:visible="true" />
 
+    <item
+        android:id="@+id/sort_current"
+        android:title="Sort by Price" />
+    <item
+        android:id="@+id/sort_diff"
+        android:title="Sort by Difference" />
     <item
         android:id="@+id/exit"
         android:title="Exit" />

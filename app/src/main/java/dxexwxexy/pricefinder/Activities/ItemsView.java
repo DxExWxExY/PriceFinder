@@ -27,6 +27,7 @@ import android.widget.Toast;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 import dxexwxexy.pricefinder.Data.Item;
 import dxexwxexy.pricefinder.R;
@@ -53,34 +54,27 @@ public class ItemsView extends AppCompatActivity {
         initUI();
     }
 
-//---------------------------------------------------------------------------------------------------------
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.options, menu);
-
-
-
         return true;
     }
 
    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch(item.getItemId()) {
-            case R.id.Sort_Items:
-
-
-        case R.id.edit:
-            finish();
-            return(true);
-
-
+            case R.id.sort_name:
+                adapter.sort(0);
+                return true;
+            case R.id.sort_current:
+                adapter.sort(1);
+                return true;
+            case R.id.sort_diff:
+                adapter.sort(2);
+                return true;
+        }
+        return false;
     }
-        return(super.onOptionsItemSelected(item));
-    }
-//---------------------------------------------------------------------------------------------------------
-
-
 
     /**
      * Initializes the RecyclerViewer for the items of operations.
@@ -99,7 +93,7 @@ public class ItemsView extends AppCompatActivity {
         FloatingActionButton addItem = findViewById(R.id.add_fab);
         addItem.setOnClickListener(view -> {
             AlertDialog.Builder mBuilder = new AlertDialog.Builder(ItemsView.this);
-            View mView = getLayoutInflater().inflate(R.layout.add_dialog,null);
+            @SuppressLint("InflateParams") View mView = getLayoutInflater().inflate(R.layout.add_dialog,null);
             EditText name = mView.findViewById(R.id.edit_item_name);
             EditText price = mView.findViewById(R.id.edit_price);
             EditText url = mView.findViewById(R.id.edit_url);
@@ -108,15 +102,12 @@ public class ItemsView extends AppCompatActivity {
             AlertDialog dialog = mBuilder.create();
             dialog.show();
             add.setOnClickListener(v -> {
-
                if(name.getText().toString().matches("") ||price.getText().toString().matches("") || url.getText().toString().matches("") ){
                    Toast.makeText(this, "Fields missing", Toast.LENGTH_SHORT).show();
-                   return;
-               }else {
+               } else {
                    adapter.addItem(new Item(name.getText().toString(), url.getText().toString(), Double.parseDouble(price.getText().toString())));
                    dialog.dismiss();
                }
-
             });
         });
         refreshLayout = findViewById(R.id.swipe_refresh);
@@ -188,7 +179,7 @@ public class ItemsView extends AppCompatActivity {
                 switch (item.getItemId()) {
                     case R.id.edit:
                         AlertDialog.Builder alertBuilder = new AlertDialog.Builder(ItemsView.this);
-                        View view = getLayoutInflater().inflate(R.layout.edit_dialog,null);
+                        @SuppressLint("InflateParams") View view = getLayoutInflater().inflate(R.layout.edit_dialog,null);
                         EditText editName = view.findViewById(R.id.edit_item_name);
                         EditText editPrice = view.findViewById(R.id.edit_price);
                         EditText editURL = view.findViewById(R.id.edit_url);
@@ -333,7 +324,7 @@ public class ItemsView extends AppCompatActivity {
             return items == null ? 0 : items.size();
         }
 
-        public void deleteSelection() {
+        void deleteSelection() {
             for (Item item : items) {
                 if (item.getIsSelected()) {
                     selectedItems.add(item);
@@ -343,19 +334,34 @@ public class ItemsView extends AppCompatActivity {
             selectedItems.clear();
         }
 
-        public void addItem(Item item) {
+        void addItem(Item item) {
             items.add(item);
         }
 
-        public void refresh() {
+        void refresh() {
             for (Item item : items) {
                 item.updateCurrentPrice();
             }
             notifyDataSetChanged();
         }
 
-        public ArrayList<Item> getItems() {
+        ArrayList<Item> getItems() {
             return items;
+        }
+
+        void sort(int type) {
+            switch (type) {
+                case 0:
+                    Collections.sort(items, Item.COMPARE_BY_NAME);
+                    break;
+                case 1:
+                    Collections.sort(items, Item.COMPARE_BY_CURR);
+                    break;
+                case 2:
+                    Collections.sort(items, Item.COMPARE_BY_DIFF);
+                    break;
+            }
+            notifyDataSetChanged();
         }
 
         /**
@@ -385,7 +391,7 @@ public class ItemsView extends AppCompatActivity {
                 parentLayout = itemView.findViewById(R.id.item_holder);
             }
 
-            public void setItem(Item item) {
+            void setItem(Item item) {
                 this.item = item;
             }
         }
