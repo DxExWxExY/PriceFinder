@@ -109,6 +109,7 @@ public class ItemsView extends AppCompatActivity {
                } else {
                    adapter.addItem(new Item(name.getText().toString(), url.getText().toString(), Double.parseDouble(price.getText().toString())));
                    dialog.dismiss();
+                   adapter.notifyDataSetChanged();
                }
             });
         });
