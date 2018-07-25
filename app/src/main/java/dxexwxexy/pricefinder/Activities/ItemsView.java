@@ -9,7 +9,6 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.view.menu.MenuView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -25,8 +24,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
-
-import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 
@@ -56,7 +53,7 @@ public class ItemsView extends AppCompatActivity {
     }
 
 //---------------------------------------------------------------------------------------------------------
-    @Override
+    /*@Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.manage_items, menu);
@@ -66,13 +63,13 @@ public class ItemsView extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) { switch(item.getItemId()) {
 
-        case R.id.exit:
+        case R.id.edit:
             finish();
             return(true);
 
     }
         return(super.onOptionsItemSelected(item));
-    }
+    }*/
 //---------------------------------------------------------------------------------------------------------
 
 
@@ -94,10 +91,10 @@ public class ItemsView extends AppCompatActivity {
         FloatingActionButton addItem = findViewById(R.id.add_fab);
         addItem.setOnClickListener(view -> {
             AlertDialog.Builder mBuilder = new AlertDialog.Builder(ItemsView.this);
-            View mView = getLayoutInflater().inflate(R.layout.add_dialog, null);
-            EditText name = mView.findViewById(R.id.add_name);
-            EditText price = mView.findViewById(R.id.add_price);
-            EditText url = mView.findViewById(R.id.add_url);
+            View mView = getLayoutInflater().inflate(R.layout.add_dialog,null);
+            EditText name = mView.findViewById(R.id.edit_item_name);
+            EditText price = mView.findViewById(R.id.edit_price);
+            EditText url = mView.findViewById(R.id.edit_url);
             Button add = mView.findViewById(R.id.add_item);
             mBuilder.setView(mView);
             AlertDialog dialog = mBuilder.create();
@@ -144,7 +141,6 @@ public class ItemsView extends AppCompatActivity {
         refreshLayout.setEnabled(true);
     }
 
-
     /**
      * Class required to use a RecyclerViewer.
      *
@@ -158,17 +154,10 @@ public class ItemsView extends AppCompatActivity {
         private ArrayList<Item> selectedItems;
         private boolean selectionMode;
         private android.support.v7.view.ActionMode.Callback callback = new android.support.v7.view.ActionMode.Callback() {
-            /**
-             * Called when action mode is first created. The menu supplied will be used to
-             * generate action buttons for the action mode.
-             *
-             * @param mode ActionMode being created
-             * @param menu Menu used to populate action buttons
-             * @return true if the action mode should be created, false if entering this
-             * mode should be aborted.
-             */
+
             @Override
             public boolean onCreateActionMode(android.support.v7.view.ActionMode mode, Menu menu) {
+                selectionMode = true;
                 mode.getMenuInflater().inflate(R.menu.manage_items, menu);
                 disableRefresh();
                 return true;
@@ -181,6 +170,34 @@ public class ItemsView extends AppCompatActivity {
 
             @Override
             public boolean onActionItemClicked(android.support.v7.view.ActionMode mode, MenuItem item) {
+                switch (item.getItemId()) {
+                    case R.id.edit:
+                        AlertDialog.Builder alertBuilder = new AlertDialog.Builder(ItemsView.this);
+                        View view = getLayoutInflater().inflate(R.layout.edit_dialog,null);
+                        EditText editName = view.findViewById(R.id.edit_item_name);
+                        EditText editPrice = view.findViewById(R.id.edit_price);
+                        EditText editURL = view.findViewById(R.id.edit_url);
+                        Button done = view.findViewById(R.id.edit_done);
+                        AlertDialog dialog = alertBuilder.show();
+                        done.setOnClickListener(e -> {
+                            Item edit = selectedItems.get(0);
+                            if (!editName.getText().toString().matches("") || !editPrice.getText().toString().matches("")) {
+                                edit.setName(editName.getText().toString());
+                                edit.setPrice(Double.parseDouble(editPrice.getText().toString()));
+                                if (!editURL.getText().toString().matches("")) {
+                                    edit.setURL(editURL.getText().toString());
+                                }
+                                dialog.dismiss();
+                            } else {
+                                Toast.makeText(ItemsView.this, "Missing Fields", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                        return true;
+                    case R.id.delete:
+                        deleteSelection();
+                        mode.finish();
+                        return true;
+                }
                 return false;
             }
 
@@ -193,6 +210,7 @@ public class ItemsView extends AppCompatActivity {
                 notifyDataSetChanged();
                 Toast.makeText(ItemsView.this, "OnDestroy!",Toast.LENGTH_SHORT).show();
                 enableRefresh();
+                selectionMode = false;
             }
         };
 
@@ -249,7 +267,7 @@ public class ItemsView extends AppCompatActivity {
         public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
             ViewHolder content = (ViewHolder) holder;
             content.setItem(items.get(position));
-            content.itemView.setBackgroundColor(Color.WHITE);
+            content.parentLayout.setBackgroundResource(R.drawable.item_view_background);
             content.name.setText(items.get(position).getName());
             content.initialPrice.setText("$"+items.get(position).getInitialPrice());
             content.currentPrice.setText("$"+items.get(position).getCurrentPrice());
@@ -298,12 +316,8 @@ public class ItemsView extends AppCompatActivity {
         }
 
         public void deleteSelection() {
-            for (Item selected: selectedItems) {
-                for (Item item: items) {
-                    if (selected.equals(item)) {
-                        items.remove(selected);
-                    }
-                }
+            for (Item item : items) {
+                if (item.)
             }
             selectedItems.clear();
         }
@@ -342,11 +356,11 @@ public class ItemsView extends AppCompatActivity {
              */
             ViewHolder(View itemView) {
                 super(itemView);
-                name = itemView.findViewById(R.id.item_name);
-                initialPrice = itemView.findViewById(R.id.initial_price);
+                name = itemView.findViewById(R.id.edit_item_name);
+                initialPrice = itemView.findViewById(R.id.edit_initial_price);
                 currentPrice = itemView.findViewById(R.id.current_price);
                 difference = itemView.findViewById(R.id.difference);
-                itemIcon = itemView.findViewById(R.id.item_icon);
+                itemIcon = itemView.findViewById(R.id.edit_icon);
                 parentLayout = itemView.findViewById(R.id.item_holder);
             }
 

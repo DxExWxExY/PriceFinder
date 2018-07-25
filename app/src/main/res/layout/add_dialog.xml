@@ -6,17 +6,16 @@
     android:layout_height="wrap_content">
 
     <EditText
-        android:id="@+id/add_name"
+        android:id="@+id/edit_item_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="24dp"
-        android:layout_marginLeft="24dp"
-        android:layout_marginRight="24dp"
         android:layout_marginStart="24dp"
         android:layout_marginTop="16dp"
         android:ems="10"
         android:hint="Name"
         android:inputType="textPersonName"
+        android:textColor="@android:color/background_dark"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.502"
         app:layout_constraintStart_toStartOf="parent"
@@ -35,28 +34,30 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
-        android:id="@+id/add_price"
+        android:id="@+id/edit_price"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:ems="10"
         android:hint="Price"
         android:inputType="numberDecimal"
+        android:textColor="@android:color/background_dark"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/add_name" />
+        app:layout_constraintTop_toBottomOf="@+id/edit_item_name" />
 
     <EditText
-        android:id="@+id/add_url"
+        android:id="@+id/edit_url"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:ems="10"
         android:hint="URL"
         android:inputType="textPersonName"
+        android:textColor="@android:color/background_dark"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/add_price" />
+        app:layout_constraintTop_toBottomOf="@+id/edit_price" />
 
     <Button
         android:id="@+id/add_item"
@@ -68,5 +69,5 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/add_url" />
+        app:layout_constraintTop_toBottomOf="@+id/edit_url" />
 </android.support.constraint.ConstraintLayout>
