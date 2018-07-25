@@ -96,9 +96,9 @@ public class ItemsView extends AppCompatActivity {
         addItem.setOnClickListener(view -> {
             AlertDialog.Builder mBuilder = new AlertDialog.Builder(ItemsView.this);
             @SuppressLint("InflateParams") View mView = getLayoutInflater().inflate(R.layout.add_dialog,null);
-            EditText name = mView.findViewById(R.id.edit_item_name);
-            EditText price = mView.findViewById(R.id.edit_price);
-            EditText url = mView.findViewById(R.id.edit_url);
+            EditText name = mView.findViewById(R.id.add_item_name);
+            EditText price = mView.findViewById(R.id.add_price);
+            EditText url = mView.findViewById(R.id.add_url);
             Button add = mView.findViewById(R.id.add_item);
             mBuilder.setView(mView);
             AlertDialog dialog = mBuilder.create();
@@ -181,24 +181,32 @@ public class ItemsView extends AppCompatActivity {
             public boolean onActionItemClicked(android.support.v7.view.ActionMode mode, MenuItem item) {
                 switch (item.getItemId()) {
                     case R.id.edit:
+                        mode.finish();
                         AlertDialog.Builder alertBuilder = new AlertDialog.Builder(ItemsView.this);
-                        View view = getLayoutInflater().inflate(R.layout.edit_dialog, null, true);
+                        View view = getLayoutInflater().inflate(R.layout.edit_dialog, null);
                         EditText editName = view.findViewById(R.id.edit_item_name);
                         EditText editPrice = view.findViewById(R.id.edit_price);
                         EditText editURL = view.findViewById(R.id.edit_url);
                         Button done = view.findViewById(R.id.edit_done);
-                        AlertDialog dialog = alertBuilder.show();
+                        alertBuilder.setView(view);
+                        AlertDialog dialog = alertBuilder.create();
+                        dialog.show();
                         done.setOnClickListener(e -> {
-                            Item edit = selectedItems.get(0);
-                            if (!editName.getText().toString().matches("") || !editPrice.getText().toString().matches("")) {
-                                edit.setName(editName.getText().toString());
-                                edit.setPrice(Double.parseDouble(editPrice.getText().toString()));
-                                if (!editURL.getText().toString().matches("")) {
-                                    edit.setURL(editURL.getText().toString());
-                                }
-                                dialog.dismiss();
+                            Item edit = getSelected();
+                            if (edit == null) {
+                                Toast.makeText(ItemsView.this, "No Item Selected", Toast.LENGTH_SHORT).show();
                             } else {
-                                Toast.makeText(ItemsView.this, "Missing Fields", Toast.LENGTH_SHORT).show();
+                                if (!editName.getText().toString().matches("") || !editPrice.getText().toString().matches("")) {
+                                    edit.setName(editName.getText().toString());
+                                    edit.setPrice(Double.parseDouble(editPrice.getText().toString()));
+                                    if (!editURL.getText().toString().matches("")) {
+                                        edit.setURL(editURL.getText().toString());
+                                    }
+                                    notifyDataSetChanged();
+                                    dialog.dismiss();
+                                } else {
+                                    Toast.makeText(ItemsView.this, "Missing Fields", Toast.LENGTH_SHORT).show();
+                                }
                             }
                         });
                         return true;
@@ -347,6 +355,15 @@ public class ItemsView extends AppCompatActivity {
 
         ArrayList<Item> getItems() {
             return items;
+        }
+
+        Item getSelected() {
+            for (Item item : items) {
+                if (item.getIsSelected()) {
+                    return item;
+                }
+            }
+            return null;
         }
 
         void sort(int type) {

@@ -23,9 +23,12 @@ public class Item implements Parcelable, Comparable<Item> {
      * Fields for sorting and website.
      */
     private static final String SITE = "https://www.amazon.com/s/ref=nb_sb_noss_2?url=search-alias%3Daps&field-keywords=";
-    public static final Comparator<Item> COMPARE_BY_NAME = (a, b) -> a.getName().compareTo(b.getName());
+    public static final Comparator<Item> COMPARE_BY_NAME = (a, b) -> a.getName().toLowerCase().compareTo(b.getName().toLowerCase());
     public static final Comparator<Item> COMPARE_BY_DIFF = (a, b) -> a.getDifference().compareTo(b.getDifference());
-    public static final Comparator<Item> COMPARE_BY_CURR = (a, b) -> a.getCurrentPrice().compareTo(b.getCurrentPrice());
+    public static final Comparator<Item> COMPARE_BY_CURR = (a, b) -> {
+        return Double.compare(Double.parseDouble(a.getCurrentPrice()), Double.parseDouble(b.getCurrentPrice()));
+    };
+
 
     /**
      * Default constructor.
