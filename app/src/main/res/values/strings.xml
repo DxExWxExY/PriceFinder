@@ -10,5 +10,6 @@
     <string name="copy">Copy</string>
     <string name="edit">Forward</string>
     <string name="exit">Forward</string>
+    <string name="title_activity_web_view">WebViewActivity</string>
 
 </resources>

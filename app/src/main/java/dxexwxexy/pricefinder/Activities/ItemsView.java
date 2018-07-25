@@ -1,6 +1,7 @@
 package dxexwxexy.pricefinder.Activities;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -56,16 +57,23 @@ public class ItemsView extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.manage_items, menu);
+        getMenuInflater().inflate(R.menu.options, menu);
+
+
+
         return true;
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) { switch(item.getItemId()) {
+   @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch(item.getItemId()) {
+            case R.id.Sort_Items:
+
 
         case R.id.edit:
             finish();
             return(true);
+
 
     }
         return(super.onOptionsItemSelected(item));
@@ -100,8 +108,15 @@ public class ItemsView extends AppCompatActivity {
             AlertDialog dialog = mBuilder.create();
             dialog.show();
             add.setOnClickListener(v -> {
-                adapter.addItem(new Item(name.getText().toString(), url.getText().toString(), Double.parseDouble(price.getText().toString())));
-                dialog.dismiss();
+
+               if(name.getText().toString().matches("") ||price.getText().toString().matches("") || url.getText().toString().matches("") ){
+                   Toast.makeText(this, "Fields missing", Toast.LENGTH_SHORT).show();
+                   return;
+               }else {
+                   adapter.addItem(new Item(name.getText().toString(), url.getText().toString(), Double.parseDouble(price.getText().toString())));
+                   dialog.dismiss();
+               }
+
             });
         });
         refreshLayout = findViewById(R.id.swipe_refresh);
@@ -207,6 +222,7 @@ public class ItemsView extends AppCompatActivity {
                         selectedItems) {
                     item.setSelected(false);
                 }
+                selectionMode=!selectionMode;
                 notifyDataSetChanged();
                 enableRefresh();
                 selectionMode = false;
@@ -296,6 +312,11 @@ public class ItemsView extends AppCompatActivity {
                     content.item.setSelected(!content.item.getIsSelected());
                     content.itemView.setBackgroundColor(content.item.getIsSelected() ? Color.GRAY : Color.WHITE);
                 } else {
+
+                    Intent intent = new Intent(ItemsView.this, WebViewActivity.class);
+//                    intent.putExtra("items", ;
+                    startActivity(intent);
+
                     // TODO: 7/24/2018 Activity
                 }
             });
