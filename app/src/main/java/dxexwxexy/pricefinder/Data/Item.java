@@ -60,7 +60,7 @@ public class Item implements Parcelable {
         }
     };
 
-    public static void setSelected(Boolean isSelected) {
+    public void setSelected(Boolean isSelected) {
         Item.isSelected = isSelected;
     }
 

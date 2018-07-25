@@ -135,6 +135,15 @@ public class ItemsView extends AppCompatActivity {
         initRecyclerView(savedInstanceState.getParcelableArrayList("items"));
     }
 
+    public void disableRefresh() {
+        refreshLayout.setRefreshing(false);
+        refreshLayout.setEnabled(false);
+    }
+
+    public void enableRefresh() {
+        refreshLayout.setEnabled(true);
+    }
+
 
     /**
      * Class required to use a RecyclerViewer.
@@ -161,6 +170,7 @@ public class ItemsView extends AppCompatActivity {
             @Override
             public boolean onCreateActionMode(android.support.v7.view.ActionMode mode, Menu menu) {
                 mode.getMenuInflater().inflate(R.menu.manage_items, menu);
+                disableRefresh();
                 return true;
             }
 
@@ -181,7 +191,8 @@ public class ItemsView extends AppCompatActivity {
                     item.setSelected(false);
                 }
                 notifyDataSetChanged();
-                Toast.makeText(ItemsView.this, "OnDesstroy!",Toast.LENGTH_SHORT).show();
+                Toast.makeText(ItemsView.this, "OnDestroy!",Toast.LENGTH_SHORT).show();
+                enableRefresh();
             }
         };
 
@@ -238,7 +249,7 @@ public class ItemsView extends AppCompatActivity {
         public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
             ViewHolder content = (ViewHolder) holder;
             content.setItem(items.get(position));
-            content.itemView.setBackgroundColor(content.item.getIsSelected() ? Color.GRAY : Color.WHITE);
+            content.itemView.setBackgroundColor(Color.WHITE);
             content.name.setText(items.get(position).getName());
             content.initialPrice.setText("$"+items.get(position).getInitialPrice());
             content.currentPrice.setText("$"+items.get(position).getCurrentPrice());
@@ -260,8 +271,6 @@ public class ItemsView extends AppCompatActivity {
                 selectionMode = true;
                 ((AppCompatActivity) view.getContext()).startSupportActionMode(callback);
                 selectedItems.add(items.get(position));
-//                Toast.makeText(ItemsView.this, "algo", Toast.LENGTH_SHORT).show();
-//                content.itemView.setBackgroundColor(getColor(R.color.grey));
                 content.item.setSelected(!content.item.getIsSelected());
                 content.itemView.setBackgroundColor(content.item.getIsSelected() ? Color.GRAY : Color.WHITE);
                 return true;
@@ -271,9 +280,8 @@ public class ItemsView extends AppCompatActivity {
                     selectedItems.add(items.get(position));
                     content.item.setSelected(!content.item.getIsSelected());
                     content.itemView.setBackgroundColor(content.item.getIsSelected() ? Color.GRAY : Color.WHITE);
-                    notifyDataSetChanged();
                 } else {
-
+                    // TODO: 7/24/2018 Activity
                 }
             });
 
