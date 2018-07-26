@@ -3,18 +3,14 @@ package dxexwxexy.pricefinder.Activities;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-import android.widget.Toast;
-import android.widget.Toolbar;
 
-import dxexwxexy.pricefinder.Data.Item;
 import dxexwxexy.pricefinder.R;
 
 public class WebViewActivity extends AppCompatActivity {
@@ -33,7 +29,7 @@ public class WebViewActivity extends AppCompatActivity {
         WebSettings settings = webView.getSettings();
         settings.setJavaScriptEnabled(true);
         if (savedInstanceState == null) {
-            webView.loadUrl(product);
+            webView.loadUrl("http://"+product);
         }
         android.support.v7.widget.Toolbar toolbar = findViewById(R.id.navigation);
         setSupportActionBar(toolbar);
