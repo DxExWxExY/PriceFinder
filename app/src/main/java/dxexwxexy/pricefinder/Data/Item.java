@@ -33,8 +33,6 @@ public class Item implements Parcelable, Comparable<Item> {
         itemDataFinder = new ItemDataFinder(url);
         this.name = name;
         this.url = url;
-        this.initialPrice = itemDataFinder.getPrice();
-        this.currentPrice = initialPrice;
         this.isSelected = false;
         this.store = itemDataFinder.getStore();
     }
@@ -110,6 +108,7 @@ public class Item implements Parcelable, Comparable<Item> {
      * Updates item current price using ItemDataFinder.
      */
     public void updateCurrentPrice() {
+        this.initialPrice = itemDataFinder.getInitialPrice();
         this.currentPrice = itemDataFinder.updatePrice(initialPrice);
     }
 
@@ -196,5 +195,10 @@ public class Item implements Parcelable, Comparable<Item> {
     @Override
     public int compareTo(@NonNull Item that) {
         return this.getDifference().compareTo(that.getDifference());
+    }
+
+    public void setInitialPrice(double initialPrice) {
+        this.initialPrice = initialPrice;
+        this.currentPrice = initialPrice;
     }
 }

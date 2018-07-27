@@ -24,6 +24,7 @@ import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.logging.Handler;
 
 import dxexwxexy.pricefinder.Data.Item;
 import dxexwxexy.pricefinder.R;
@@ -138,9 +139,9 @@ public class ItemManager extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private void initItems() {
         items = new ArrayList<>();
         //Sample
-        items.add(new Item("GTX 1080 Ti", "https://images.nvidia.com/" +
-                "geforce-com/international/images/nvidia-geforce-gtx-1080-ti/" +
-                "GeForce_GTX_1080ti_3qtr_top_left.png"));
+        items.add(new Item("iPhone 6", "https://www.amazon.com/Apple-iPhone-Unlocked" +
+                "-Certified-Refurbished/dp/B00YD547Q6/ref=sr_1_1?s=wireless&ie=UTF8&qid=" +
+                "1532727070&sr=1-1&keywords=iphone+6"));
     }
 
     /**
@@ -170,8 +171,7 @@ public class ItemManager extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         content.name.setText(items.get(position).getName());
         content.initialPrice.setText("$"+items.get(position).getInitialPrice());
         content.currentPrice.setText("$"+items.get(position).getCurrentPrice());
-        Picasso.get().load(items.get(position).getURL()).into(content.itemIcon);
-        if (Integer.parseInt(items.get(position).getDifference()) <= 0) {
+        /*if (Integer.parseInt(items.get(position).getDifference()) <= 0) {
             content.difference.setBackgroundColor(context.getColor(R.color.green));
             content.difference.setText(items.get(position).getDifference()+"%");
         } else if (Integer.parseInt(items.get(position).getDifference()) <= 20) {
@@ -183,7 +183,7 @@ public class ItemManager extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         } else  {
             content.difference.setBackgroundColor(context.getColor(R.color.red));
             content.difference.setText("+"+items.get(position).getDifference()+"%");
-        }
+        }*/
         content.parentLayout.setOnLongClickListener(view -> {
             selectionMode = true;
             ((AppCompatActivity) view.getContext()).startSupportActionMode(callback);
@@ -229,6 +229,7 @@ public class ItemManager extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     void refresh() {
         for (Item item : items) {
             item.updateCurrentPrice();
+            System.out.println("rfs ======================== "+item.getInitialPrice());
         }
         notifyDataSetChanged();
     }

@@ -29,7 +29,7 @@ public class WebViewActivity extends AppCompatActivity {
         WebSettings settings = webView.getSettings();
         settings.setJavaScriptEnabled(true);
         if (savedInstanceState == null) {
-            webView.loadUrl("http://"+product);
+            webView.loadUrl(product);
         }
         android.support.v7.widget.Toolbar toolbar = findViewById(R.id.navigation);
         setSupportActionBar(toolbar);
