@@ -1,5 +1,6 @@
 package dxexwxexy.pricefinder.Data;
 
+import android.content.Intent;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
@@ -88,11 +89,40 @@ public class Item implements Parcelable, Comparable<Item> {
     }
 
     public String getDifference() {
-        return String.format(Locale.getDefault(), "%.0f", (((currentPrice - initialPrice) / initialPrice ) * 100));
+        int difference = (int) (((currentPrice - initialPrice) / initialPrice ) * 100);
+        if (Double.isNaN(difference)){
+            return String.format(Locale.getDefault(), "%d", 0);
+        } else {
+            return String.format(Locale.getDefault(), "%d", difference);
+        }
     }
 
     public String getURL() {
         return url;
+    }
+
+    public boolean isFetched() {
+        return itemDataFinder.isFetched();
+    }
+
+    /**
+     * Updates item current price using ItemDataFinder.
+     */
+    public void updateCurrentPrice() {
+        this.initialPrice = itemDataFinder.getInitialPrice();
+        this.currentPrice = itemDataFinder.getCurrentPrice();
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setURL(String url) {
+        this.url = url;
+    }
+
+    public void setSelected(Boolean isSelected) {
+        this.isSelected = isSelected;
     }
 
     @Override
@@ -102,14 +132,6 @@ public class Item implements Parcelable, Comparable<Item> {
             return this.name.equals(that.name) && this.url.equals(that.url);
         }
         return false;
-    }
-
-    /**
-     * Updates item current price using ItemDataFinder.
-     */
-    public void updateCurrentPrice() {
-        this.initialPrice = itemDataFinder.getInitialPrice();
-        this.currentPrice = itemDataFinder.updatePrice(initialPrice);
     }
 
     /**
@@ -140,18 +162,6 @@ public class Item implements Parcelable, Comparable<Item> {
         dest.writeString(url);
         dest.writeDouble(initialPrice);
         dest.writeDouble(currentPrice);
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public void setURL(String url) {
-        this.url = url;
-    }
-
-    public void setSelected(Boolean isSelected) {
-        this.isSelected = isSelected;
     }
 
     /**
@@ -197,8 +207,4 @@ public class Item implements Parcelable, Comparable<Item> {
         return this.getDifference().compareTo(that.getDifference());
     }
 
-    public void setInitialPrice(double initialPrice) {
-        this.initialPrice = initialPrice;
-        this.currentPrice = initialPrice;
-    }
 }

@@ -20,7 +20,6 @@ public class ItemDataFinder {
     private static final String AMAZON_ID = ".sims-fbt-checkbox-label";
     private static final String AMAZON = "amazon";
 
-
     ItemDataFinder(String url) {
         this.url = url;
         // TODO: 7/27/2018 undo hardcode
@@ -30,34 +29,26 @@ public class ItemDataFinder {
                 currentPrice = (double) msg.obj;
             } else {
                 initialPrice = (double) msg.obj;
-                System.out.println("msg =============================== "+ msg.obj+ "==");
+                currentPrice = initialPrice;
                 fetched = true;
             }
             return true;
         });
-        getPrice();
+//        setStore();
+        fetchPrices();
     }
 
-    /**
-     * Simulates a price generation using a range and an initial price.
-     * @param initial Initial price of the item.
-     * @return Randomized price from range.
-     */
-    public double updatePrice(double initial) {
-        return Math.random() * ((initial*2 - initial/2) + 1) + (initial/2);
-    }
-
-    public double getPrice() {
+    private void fetchPrices() {
         switch (store) {
             case AMAZON:
                 getFromStore(AMAZON_ID);
                 break;
         }
-        return currentPrice;
     }
 
     private void setStore() {
         if (url.matches(AMAZON)) {
+            System.out.println(url);
             store = AMAZON;
         }
     }
@@ -76,7 +67,7 @@ public class ItemDataFinder {
                 Pattern pattern = Pattern.compile("\\$\\d+\\.\\d+");
                 Matcher matcher = pattern.matcher(question);
                 if (matcher.find()) {
-                    message.obj = (Object) Double.parseDouble(matcher.group(0).substring(1));
+                    message.obj = Double.parseDouble(matcher.group(0).substring(1));
                 }
                 handler.sendMessage(message);
             } catch (IOException e) {
@@ -90,5 +81,16 @@ public class ItemDataFinder {
             return initialPrice;
         }
         return -1.0;
+    }
+
+    public double getCurrentPrice() {
+        if (fetched) {
+            return currentPrice;
+        }
+        return -1.0;
+    }
+
+    public boolean isFetched() {
+        return fetched;
     }
 }

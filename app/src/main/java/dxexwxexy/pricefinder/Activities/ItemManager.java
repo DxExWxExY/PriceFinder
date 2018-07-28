@@ -171,7 +171,7 @@ public class ItemManager extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         content.name.setText(items.get(position).getName());
         content.initialPrice.setText("$"+items.get(position).getInitialPrice());
         content.currentPrice.setText("$"+items.get(position).getCurrentPrice());
-        /*if (Integer.parseInt(items.get(position).getDifference()) <= 0) {
+        if (Integer.parseInt(items.get(position).getDifference()) <= 0) {
             content.difference.setBackgroundColor(context.getColor(R.color.green));
             content.difference.setText(items.get(position).getDifference()+"%");
         } else if (Integer.parseInt(items.get(position).getDifference()) <= 20) {
@@ -183,7 +183,7 @@ public class ItemManager extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         } else  {
             content.difference.setBackgroundColor(context.getColor(R.color.red));
             content.difference.setText("+"+items.get(position).getDifference()+"%");
-        }*/
+        }
         content.parentLayout.setOnLongClickListener(view -> {
             selectionMode = true;
             ((AppCompatActivity) view.getContext()).startSupportActionMode(callback);
@@ -229,7 +229,6 @@ public class ItemManager extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     void refresh() {
         for (Item item : items) {
             item.updateCurrentPrice();
-            System.out.println("rfs ======================== "+item.getInitialPrice());
         }
         notifyDataSetChanged();
     }
@@ -260,6 +259,14 @@ public class ItemManager extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 break;
         }
         notifyDataSetChanged();
+    }
+
+    boolean isFetched() {
+        boolean fetchDone = true;
+        for (Item item : items) {
+            fetchDone &= item.isFetched();
+        }
+        return fetchDone;
     }
 
     /**
