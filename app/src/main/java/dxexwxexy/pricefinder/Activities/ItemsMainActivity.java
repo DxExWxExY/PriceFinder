@@ -2,6 +2,8 @@ package dxexwxexy.pricefinder.Activities;
 
 import android.annotation.SuppressLint;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
@@ -14,6 +16,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -27,7 +30,10 @@ public class ItemsMainActivity extends AppCompatActivity {
      * Fields used for UI manipulation.
      */
     private SwipeRefreshLayout refreshLayout;
-    private ItemManager adapter;
+    private ProgressBar loading;
+    private ItemManager itemManager;
+    private Handler handler;
+    private Thread updater;
 
     /***
      * {@inheritDoc}
@@ -41,7 +47,41 @@ public class ItemsMainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         initRecyclerView(null);
         initUI();
+        initUpdating();
+    }
 
+    private void initUpdating() {
+        handler = new Handler(msg -> {
+            if (msg.arg1 == 1) {
+                refreshLayout.setVisibility(View.VISIBLE);
+                loading.setVisibility(View.INVISIBLE);
+                itemManager.refresh();
+            } else {
+                refreshLayout.setVisibility(View.INVISIBLE);
+                loading.setVisibility(View.VISIBLE);
+            }
+            return true;
+        });
+        if (updater == null) {
+            updater = new Thread(() -> {
+                while (!itemManager.isFetched()) {
+                    Message message = new Message();
+                    message.arg1 = 0;
+                    handler.sendMessage(message);
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+                Message message = new Message();
+                message.arg1 = 1;
+                handler.sendMessage(message);
+            });
+            updater.start();
+        } else {
+            updater.start();
+        }
 
     }
 
@@ -55,13 +95,13 @@ public class ItemsMainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch(item.getItemId()) {
             case R.id.sort_name:
-                adapter.sort(0);
+                itemManager.sort(0);
                 return true;
             case R.id.sort_current:
-                adapter.sort(1);
+                itemManager.sort(1);
                 return true;
             case R.id.sort_diff:
-                adapter.sort(2);
+                itemManager.sort(2);
                 return true;
         }
         return false;
@@ -72,8 +112,8 @@ public class ItemsMainActivity extends AppCompatActivity {
      */
     private void initRecyclerView(ArrayList<Item> items) {
         RecyclerView recyclerView = findViewById(R.id.items_list);
-        adapter = (items == null) ? new ItemManager(this) : new ItemManager(items, this);
-        recyclerView.setAdapter(adapter);
+        itemManager = (items == null) ? new ItemManager(this) : new ItemManager(items, this);
+        recyclerView.setAdapter(itemManager);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
     }
 
@@ -95,16 +135,18 @@ public class ItemsMainActivity extends AppCompatActivity {
                if(name.getText().toString().matches("") || url.getText().toString().matches("") ){
                    Toast.makeText(this, "Fields missing", Toast.LENGTH_SHORT).show();
                } else {
-                   adapter.addItem(new Item(name.getText().toString(), url.getText().toString()));
+                   itemManager.addItem(new Item(name.getText().toString(), url.getText().toString()));
                    dialog.dismiss();
-                   adapter.notifyDataSetChanged();
+                   itemManager.notifyDataSetChanged();
                }
             });
         });
         refreshLayout = findViewById(R.id.swipe_refresh);
+        loading = findViewById(R.id.loading_icon);
+        refreshLayout.setVisibility(View.INVISIBLE);
         refreshLayout.setOnRefreshListener(() -> {
             refreshLayout.setRefreshing(true);
-            adapter.refresh();
+            itemManager.refresh();
             refreshLayout.setRefreshing(false);
         });
     }
@@ -116,7 +158,7 @@ public class ItemsMainActivity extends AppCompatActivity {
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putParcelableArrayList("items", adapter.getItems());
+        outState.putParcelableArrayList("items", itemManager.getItems());
     }
 
     /***
