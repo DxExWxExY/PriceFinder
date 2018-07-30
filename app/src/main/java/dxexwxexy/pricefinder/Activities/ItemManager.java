@@ -142,6 +142,9 @@ public class ItemManager extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         items.add(new Item("iPhone 6", "https://www.amazon.com/Apple-iPhone-Unlocked" +
                 "-Certified-Refurbished/dp/B00YD547Q6/ref=sr_1_1?s=wireless&ie=UTF8&qid=" +
                 "1532727070&sr=1-1&keywords=iphone+6"));
+        items.add(new Item("Ebay phone", "https://www.ebay.com/itm/iPhone-7-Plus-32GB" +
+                "-Verizon/253785012080?hash=item3b16c3f770%3Ag%3AYP8AAOSw0URbXmo~&LH_Auction=1&" +
+                "_sacat=0&_nkw=iphone&_from=R40&rt=nc"));
     }
 
     /**

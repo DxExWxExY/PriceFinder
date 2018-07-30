@@ -63,6 +63,7 @@ public class WebViewActivity extends AppCompatActivity {
                 android.content.ClipData clip = android.content.ClipData.newPlainText("Link Copied", webView.getUrl());
                 assert clipboard != null;
                 clipboard.setPrimaryClip(clip);
+                return true;
             case R.id.share:
                 try {
                     Intent i = new Intent(Intent.ACTION_SEND);

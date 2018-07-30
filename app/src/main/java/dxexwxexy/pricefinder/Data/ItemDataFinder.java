@@ -17,13 +17,16 @@ public class ItemDataFinder {
     private double initialPrice, currentPrice;
     private Handler handler;
     private boolean fetched;
-    private static final String AMAZON_ID = ".sims-fbt-checkbox-label";
+    private static final String AMAZON_ID = ".a-section .a-spacing-none";
     private static final String AMAZON = "amazon";
+    private static final String EBAY_ID = ".notranslate";
+    private static final String EBAY = "ebay";
 
     ItemDataFinder(String url) {
         this.url = url;
         // TODO: 7/27/2018 undo hardcode
-        store = AMAZON;
+        setStore();
+        System.out.println(store);
         handler = new Handler(msg -> {
             if (fetched) {
                 currentPrice = (double) msg.obj;
@@ -34,22 +37,24 @@ public class ItemDataFinder {
             }
             return true;
         });
-//        setStore();
         fetchPrices();
     }
 
     private void fetchPrices() {
-        switch (store) {
-            case AMAZON:
-                getFromStore(AMAZON_ID);
-                break;
+        if (store.equals(AMAZON)) {
+            getFromStore(AMAZON_ID);
+        } else if (store.equals(EBAY)) {
+            getFromStore(EBAY_ID);
         }
     }
 
     private void setStore() {
-        if (url.matches(AMAZON)) {
-            System.out.println(url);
-            store = AMAZON;
+        if (url.matches("\\S+" + AMAZON + "\\S+")) {
+            System.out.println("set to amazon");
+            this.store = "amazon";
+        } else if (url.matches("\\S+" + EBAY + "\\S+")) {
+            System.out.println("set to ebay");
+            this.store = "ebay";
         }
     }
 
