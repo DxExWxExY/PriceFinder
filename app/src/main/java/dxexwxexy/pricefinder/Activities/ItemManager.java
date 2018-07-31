@@ -3,6 +3,7 @@ package dxexwxexy.pricefinder.Activities;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
@@ -10,6 +11,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.view.ActionMode;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -174,6 +176,8 @@ public class ItemManager extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         content.name.setText(items.get(position).getName());
         content.initialPrice.setText("$"+items.get(position).getInitialPrice());
         content.currentPrice.setText("$"+items.get(position).getCurrentPrice());
+        content.itemIcon.setImageResource(items.get(position).getStore().equals("amazon") ?
+                R.drawable.ic_amazon : R.drawable.ic_ebay);
         if (Integer.parseInt(items.get(position).getDifference()) <= 0) {
             content.difference.setBackgroundColor(context.getColor(R.color.green));
             content.difference.setText(items.get(position).getDifference()+"%");
@@ -228,7 +232,12 @@ public class ItemManager extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     void addItem(Item item) {
         items.add(item);
-        itemDatabase.addItem(item);
+        ((ItemsMainActivity) context).initUpdating();
+        new Thread(() -> {
+            while (!item.isFetched());
+            item.updateCurrentPrice();
+            itemDatabase.addItem(item);
+        }).start();
     }
 
     void refresh() {
@@ -272,6 +281,10 @@ public class ItemManager extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             fetchDone &= item.isFetched();
         }
         return fetchDone;
+    }
+
+    public void resetFetch() {
+
     }
 
     /**

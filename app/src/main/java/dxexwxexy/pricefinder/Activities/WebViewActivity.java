@@ -73,6 +73,9 @@ public class WebViewActivity extends AppCompatActivity {
                     startActivity(Intent.createChooser(i, "Pick an App"));
                 } catch(Exception ignored) { }
                 return true;
+            case R.id.close:
+                finish();
+                return true;
         }
         return false;
     }

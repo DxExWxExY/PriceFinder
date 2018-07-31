@@ -1,6 +1,5 @@
 package dxexwxexy.pricefinder.Data;
 
-import android.content.Intent;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
@@ -24,13 +23,15 @@ public class Item implements Parcelable, Comparable<Item> {
     public static final Comparator<Item> COMPARE_BY_NAME = (a, b) -> a.getName().toLowerCase().compareTo(b.getName().toLowerCase());
     public static final Comparator<Item> COMPARE_BY_DIFF = (a, b) -> a.getDifference().compareTo(b.getDifference());
     public static final Comparator<Item> COMPARE_BY_CURR = (a, b) -> Double.compare(Double.parseDouble(a.getCurrentPrice()), Double.parseDouble(b.getCurrentPrice()));
+    public static final Comparator<Item> COMPARE_BY_STORE = (a, b) -> a.getStore().compareTo(b.getStore());
 
     Item(String name, String url, double initialPrice, double currentPrice) {
-        itemDataFinder = new ItemDataFinder(url);
+        itemDataFinder = new ItemDataFinder(url, initialPrice);
         this.name = name;
         this.url = url;
         this.initialPrice = initialPrice;
-        this.currentPrice = itemDataFinder.getCurrentPrice();
+        this.currentPrice = currentPrice;
+        this.isSelected = false;
         this.store = itemDataFinder.getStore();
     }
 
@@ -111,14 +112,20 @@ public class Item implements Parcelable, Comparable<Item> {
     }
 
     public boolean isFetched() {
-        return itemDataFinder.isFetched();
+        if (store.equals("Unknown")) {
+            return true;
+        } else {
+            return itemDataFinder.isFetched();
+        }
     }
 
     /**
      * Updates item current price using ItemDataFinder.
      */
     public void updateCurrentPrice() {
-        this.initialPrice = itemDataFinder.getInitialPrice();
+        if (initialPrice == 0) {
+            this.initialPrice = itemDataFinder.getInitialPrice();
+        }
         this.currentPrice = itemDataFinder.getCurrentPrice();
     }
 
@@ -214,6 +221,11 @@ public class Item implements Parcelable, Comparable<Item> {
     @Override
     public int compareTo(@NonNull Item that) {
         return this.getDifference().compareTo(that.getDifference());
+    }
+
+    @Override
+    public String toString() {
+        return name + " " + initialPrice + " " + currentPrice;
     }
 
 }

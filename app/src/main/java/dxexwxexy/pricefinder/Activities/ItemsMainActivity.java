@@ -35,6 +35,7 @@ public class ItemsMainActivity extends AppCompatActivity {
     /***
      * Fields used for UI manipulation.
      */
+    FloatingActionButton addItem;
     private SwipeRefreshLayout refreshLayout;
     private ProgressBar loading;
     private ItemManager itemManager;
@@ -49,15 +50,15 @@ public class ItemsMainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_items_view);
-        CheckInternetConnection();
+        checkInternetConnection();
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         initRecyclerView(null);
         initUI();
-        initUpdating();
     }
 
-    private void initUpdating() {
+    public void initUpdating() {
+        itemManager.resetFetch();
         handler = new Handler(msg -> {
             if (msg.arg1 == 1) {
                 refreshLayout.setVisibility(View.VISIBLE);
@@ -76,7 +77,7 @@ public class ItemsMainActivity extends AppCompatActivity {
                     message.arg1 = 0;
                     handler.sendMessage(message);
                     try {
-                        Thread.sleep(1000);
+                        Thread.sleep(200);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
@@ -98,9 +99,9 @@ public class ItemsMainActivity extends AppCompatActivity {
         return true;
     }
 
-   @Override
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch(item.getItemId()) {
+        switch (item.getItemId()) {
             case R.id.sort_name:
                 itemManager.sort(0);
                 return true;
@@ -128,10 +129,10 @@ public class ItemsMainActivity extends AppCompatActivity {
      * Initializes the UI Components.
      */
     private void initUI() {
-        FloatingActionButton addItem = findViewById(R.id.add_fab);
+        addItem = findViewById(R.id.add_fab);
         addItem.setOnClickListener(view -> {
             AlertDialog.Builder mBuilder = new AlertDialog.Builder(ItemsMainActivity.this);
-            @SuppressLint("InflateParams") View mView = getLayoutInflater().inflate(R.layout.add_dialog,null);
+            @SuppressLint("InflateParams") View mView = getLayoutInflater().inflate(R.layout.add_dialog, null);
             EditText name = mView.findViewById(R.id.add_item_name);
             EditText url = mView.findViewById(R.id.add_url);
             Button add = mView.findViewById(R.id.add_item);
@@ -141,9 +142,9 @@ public class ItemsMainActivity extends AppCompatActivity {
             add.setOnClickListener(v -> {
                 String ebay = "\\S+\\.ebay\\.\\S+";
                 String amazon = "\\S+\\.amazon\\.\\S+";
-                if(name.getText().toString().matches("") || url.getText().toString().matches("") ){
+                if (name.getText().toString().matches("") || url.getText().toString().matches("")) {
                     Toast.makeText(this, "Fields missing", Toast.LENGTH_SHORT).show();
-                } else if (url.getText().toString().matches(ebay) || url.getText().toString().matches(amazon)){
+                } else if (url.getText().toString().matches(ebay) || url.getText().toString().matches(amazon)) {
                     itemManager.addItem(new Item(name.getText().toString(), url.getText().toString()));
                     dialog.dismiss();
                     itemManager.notifyDataSetChanged();
@@ -155,9 +156,16 @@ public class ItemsMainActivity extends AppCompatActivity {
         refreshLayout = findViewById(R.id.swipe_refresh);
         loading = findViewById(R.id.loading_icon);
         refreshLayout.setVisibility(View.INVISIBLE);
+        if (checkInternetConnection()) {
+            initUpdating();
+        } else {
+            loading.setVisibility(View.INVISIBLE);
+            refreshLayout.setVisibility(View.VISIBLE);
+        }
         refreshLayout.setOnRefreshListener(() -> {
             refreshLayout.setRefreshing(true);
             itemManager.refresh();
+            initUpdating();
             refreshLayout.setRefreshing(false);
         });
     }
@@ -185,21 +193,19 @@ public class ItemsMainActivity extends AppCompatActivity {
     public void disableRefresh() {
         refreshLayout.setRefreshing(false);
         refreshLayout.setEnabled(false);
+        addItem.setVisibility(View.GONE);
     }
 
     public void enableRefresh() {
         refreshLayout.setEnabled(true);
+        addItem.setVisibility(View.VISIBLE);
     }
 
-    public  void CheckInternetConnection() {
+    public boolean checkInternetConnection() {
         ConnectivityManager connManager = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
         NetworkInfo wifi = connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
         NetworkInfo mobile = connManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
-
-
         if (!wifi.isConnected()) {
-
-
             if (mobile.isConnected()) {
             } else {
                 AlertDialog.Builder builder;
@@ -218,11 +224,10 @@ public class ItemsMainActivity extends AppCompatActivity {
                         })
                         .setIcon(android.R.drawable.ic_dialog_info)
                         .show();
+                return false;
             }
         }
-
         if (!mobile.isConnected()) {
-
             if (wifi.isConnected()) {
             } else {
                 AlertDialog.Builder builder;
@@ -241,8 +246,9 @@ public class ItemsMainActivity extends AppCompatActivity {
                         })
                         .setIcon(android.R.drawable.ic_dialog_info)
                         .show();
+                return false;
             }
-
         }
+        return true;
     }
 }

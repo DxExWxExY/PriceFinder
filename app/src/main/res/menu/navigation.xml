@@ -8,6 +8,11 @@
         android:title="Back"
         app:showAsAction="always" />
     <item
+        android:id="@+id/close"
+        android:icon="@drawable/ic_close"
+        android:title="Close"
+        app:showAsAction="always" />
+    <item
         android:id="@+id/share"
         android:icon="@drawable/ic_share"
         android:title="Share"

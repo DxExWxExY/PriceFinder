@@ -28,23 +28,60 @@ public class ItemDataFinder {
         this.url = url;
         setStore();
         handler = new Handler(msg -> {
-            if (fetched) {
-                currentPrice = (double) msg.obj;
-            } else {
-                initialPrice = (double) msg.obj;
-                currentPrice = initialPrice;
-                fetched = true;
+            switch (msg.arg1) {
+                case 1:
+                    initialPrice = -1;
+                    currentPrice = -1;
+                    fetched = true;
+                    return true;
+                default:
+                    if (fetched) {
+                        currentPrice = (double) msg.obj;
+                    } else {
+                        initialPrice = (double) msg.obj;
+                        currentPrice = initialPrice;
+                        fetched = true;
+                    }
+                    return true;
             }
-            return true;
+        });
+        fetchPrices();
+    }
+
+    public ItemDataFinder(String url, double initialPrice) {
+        this.url = url;
+        this.initialPrice = initialPrice;
+        setStore();
+        handler = new Handler(msg -> {
+            switch (msg.arg1) {
+                case 1:
+                    currentPrice = -1;
+                    fetched = true;
+                    return true;
+                default:
+                    if (fetched) {
+                        currentPrice = (double) msg.obj;
+                    } else {
+                        currentPrice = (double) msg.obj;
+                        fetched = true;
+                    }
+                    return true;
+            }
         });
         fetchPrices();
     }
 
     private void fetchPrices() {
-        if (store.equals(AMAZON)) {
-            getFromStore(AMAZON_ID);
-        } else if (store.equals(EBAY)) {
-            getFromStore(EBAY_ID);
+        switch (store) {
+            case AMAZON:
+                getFromStore(AMAZON_ID);
+                break;
+            case EBAY:
+                getFromStore(EBAY_ID);
+                break;
+            default:
+                currentPrice = 0;
+                break;
         }
     }
 
@@ -66,10 +103,9 @@ public class ItemDataFinder {
 
     private void getFromStore(String identifier) {
         new Thread(() -> {
-            Message message = new Message();
             try {
-                Document document;
-                document = Jsoup.connect(url).get();
+                Message message = new Message();
+                Document document = Jsoup.connect(url).get();
                 String question = document.select(identifier).first().text();
                 Pattern pattern = Pattern.compile("\\$\\d+\\.\\d+");
                 Matcher matcher = pattern.matcher(question);
@@ -77,9 +113,10 @@ public class ItemDataFinder {
                     message.obj = Double.parseDouble(matcher.group(0).substring(1));
                 }
                 handler.sendMessage(message);
-            } catch (Exception e) {
-                fetched = true;
-                e.printStackTrace();
+            } catch (IllegalArgumentException | NullPointerException | IOException e) {
+                Message message = new Message();
+                message.arg1 = 1;
+                handler.sendMessage(message);
             }
         }).start();
     }
