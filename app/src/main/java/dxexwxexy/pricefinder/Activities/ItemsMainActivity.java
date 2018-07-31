@@ -1,9 +1,15 @@
 package dxexwxexy.pricefinder.Activities;
 
 import android.annotation.SuppressLint;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.provider.Settings;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
@@ -43,6 +49,7 @@ public class ItemsMainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_items_view);
+        CheckInternetConnection();
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         initRecyclerView(null);
@@ -182,5 +189,60 @@ public class ItemsMainActivity extends AppCompatActivity {
 
     public void enableRefresh() {
         refreshLayout.setEnabled(true);
+    }
+
+    public  void CheckInternetConnection() {
+        ConnectivityManager connManager = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
+        NetworkInfo wifi = connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+        NetworkInfo mobile = connManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
+
+
+        if (!wifi.isConnected()) {
+
+
+            if (mobile.isConnected()) {
+            } else {
+                AlertDialog.Builder builder;
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    builder = new AlertDialog.Builder(this, android.R.style.Theme_Material_Dialog_Alert);
+                } else {
+                    builder = new AlertDialog.Builder(this);
+                }
+                builder.setTitle("No wifi Connection")
+                        .setMessage("Would you like to go to wifi settings?")
+                        .setPositiveButton(android.R.string.yes, (dialog, which) -> {
+                            startActivity(new Intent(Settings.ACTION_WIFI_SETTINGS)); // continue with delete
+                        })
+                        .setNegativeButton(android.R.string.no, (dialog, which) -> {
+                            // do nothing
+                        })
+                        .setIcon(android.R.drawable.ic_dialog_info)
+                        .show();
+            }
+        }
+
+        if (!mobile.isConnected()) {
+
+            if (wifi.isConnected()) {
+            } else {
+                AlertDialog.Builder builder;
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    builder = new AlertDialog.Builder(this, android.R.style.Theme_Material_Dialog_Alert);
+                } else {
+                    builder = new AlertDialog.Builder(this);
+                }
+                builder.setTitle("No Internet Detected")
+                        .setMessage("Would you like to go to Network settings?")
+                        .setPositiveButton(android.R.string.yes, (dialog, which) -> {
+                            startActivity(new Intent(Settings.ACTION_SETTINGS)); // continue with delete
+                        })
+                        .setNegativeButton(android.R.string.no, (dialog, which) -> {
+                            // do nothing
+                        })
+                        .setIcon(android.R.drawable.ic_dialog_info)
+                        .show();
+            }
+
+        }
     }
 }
