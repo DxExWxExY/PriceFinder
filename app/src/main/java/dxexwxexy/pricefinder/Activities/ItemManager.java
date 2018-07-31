@@ -8,6 +8,7 @@ import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.view.ActionMode;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -20,13 +21,11 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.squareup.picasso.Picasso;
-
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.logging.Handler;
 
 import dxexwxexy.pricefinder.Data.Item;
+import dxexwxexy.pricefinder.Data.ItemDatabase;
 import dxexwxexy.pricefinder.R;
 
 /**
@@ -38,11 +37,12 @@ public class ItemManager extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     /**
      * Fields used by the RecyclerViewer.
      */
+    private ItemDatabase itemDatabase;
     private ArrayList<Item> items;
     private ArrayList<Item> selectedItems;
     private boolean selectionMode;
     private Context context;
-    private android.support.v7.view.ActionMode.Callback callback = new android.support.v7.view.ActionMode.Callback() {
+    private ActionMode.Callback callback = new ActionMode.Callback() {
 
         @Override
         public boolean onCreateActionMode(android.support.v7.view.ActionMode mode, Menu menu) {
@@ -77,13 +77,19 @@ public class ItemManager extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                         AlertDialog dialog = alertBuilder.create();
                         dialog.show();
                         done.setOnClickListener(e -> {
+                            String ebay = "\\S+\\.ebay\\.\\S+";
+                            String amazon = "\\S+\\.amazon\\.\\S+";
                             if (!editName.getText().toString().matches("")) {
-                                edit.setName(editName.getText().toString());
-                                if (!editURL.getText().toString().matches("")) {
+                                if (editURL.getText().toString().matches(ebay) || editURL.getText().toString().matches(amazon)) {
+                                    itemDatabase.editItem(edit, editName.getText().toString(), editURL.getText().toString());
+                                    edit.setName(editName.getText().toString());
                                     edit.setURL(editURL.getText().toString());
+                                    notifyDataSetChanged();
+                                    dialog.dismiss();
+                                } else {
+                                    Toast.makeText(context, "Invalid URL", Toast.LENGTH_SHORT).show();
                                 }
-                                notifyDataSetChanged();
-                                dialog.dismiss();
+
                             } else {
                                 Toast.makeText(context, "Missing Fields", Toast.LENGTH_SHORT).show();
                             }
@@ -137,14 +143,8 @@ public class ItemManager extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
      * Method to simulate data read.
      */
     private void initItems() {
-        items = new ArrayList<>();
-        //Sample
-        items.add(new Item("iPhone 6", "https://www.amazon.com/Apple-iPhone-Unlocked" +
-                "-Certified-Refurbished/dp/B00YD547Q6/ref=sr_1_1?s=wireless&ie=UTF8&qid=" +
-                "1532727070&sr=1-1&keywords=iphone+6"));
-        items.add(new Item("Ebay phone", "https://www.ebay.com/itm/iPhone-7-Plus-32GB" +
-                "-Verizon/253785012080?hash=item3b16c3f770%3Ag%3AYP8AAOSw0URbXmo~&LH_Auction=1&" +
-                "_sacat=0&_nkw=iphone&_from=R40&rt=nc"));
+        itemDatabase = new ItemDatabase(context);
+        items = itemDatabase.getItems();
     }
 
     /**
@@ -219,6 +219,7 @@ public class ItemManager extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         for (Item item : items) {
             if (item.getIsSelected()) {
                 selectedItems.add(item);
+                itemDatabase.deleteItem(item);
             }
         }
         items.removeAll(selectedItems);
@@ -227,6 +228,7 @@ public class ItemManager extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     void addItem(Item item) {
         items.add(item);
+        itemDatabase.addItem(item);
     }
 
     void refresh() {

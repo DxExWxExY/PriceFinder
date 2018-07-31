@@ -25,6 +25,15 @@ public class Item implements Parcelable, Comparable<Item> {
     public static final Comparator<Item> COMPARE_BY_DIFF = (a, b) -> a.getDifference().compareTo(b.getDifference());
     public static final Comparator<Item> COMPARE_BY_CURR = (a, b) -> Double.compare(Double.parseDouble(a.getCurrentPrice()), Double.parseDouble(b.getCurrentPrice()));
 
+    Item(String name, String url, double initialPrice, double currentPrice) {
+        itemDataFinder = new ItemDataFinder(url);
+        this.name = name;
+        this.url = url;
+        this.initialPrice = initialPrice;
+        this.currentPrice = itemDataFinder.getCurrentPrice();
+        this.store = itemDataFinder.getStore();
+    }
+
     /**
      * Default constructor.
      * @param name Item name.
@@ -73,7 +82,7 @@ public class Item implements Parcelable, Comparable<Item> {
     }
 
     public String getInitialPrice() {
-        return String.valueOf(initialPrice);
+        return String.format(Locale.getDefault(), "%.2f", initialPrice);
     }
 
     public String getCurrentPrice() {

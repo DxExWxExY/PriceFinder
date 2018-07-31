@@ -1,10 +1,22 @@
 package dxexwxexy.pricefinder.Data;
 
+import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
+import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import java.util.ArrayList;
+
 public class ItemDatabase extends SQLiteOpenHelper {
+
+    private static final String TB_NAME = "items";
+    private static final String NAME = "product";
+    private static final String INITIAL = "initial_price";
+    private static final String CURRENT = "current_price";
+    private static final String URL = "url";
+
     /**
      * Create a helper object to create, open, and/or manage a database.
      * This method always returns very quickly.  The database is not actually
@@ -12,14 +24,11 @@ public class ItemDatabase extends SQLiteOpenHelper {
      * {@link #getReadableDatabase} is called.
      *
      * @param context to use to open or create the database
-     * @param name    of the database file, or null for an in-memory database
-     * @param factory to use for creating cursor objects, or null for the default
-     * @param version number of the database (starting at 1); if the database is older,
      *                {@link #onUpgrade} will be used to upgrade the database; if the database is
      *                newer, {@link #onDowngrade} will be used to downgrade the database
      */
-    public ItemDatabase(Context context, String name, SQLiteDatabase.CursorFactory factory, int version) {
-        super(context, name, factory, version);
+    public ItemDatabase(Context context) {
+        super(context, TB_NAME, null, 1);
     }
 
     /**
@@ -30,7 +39,10 @@ public class ItemDatabase extends SQLiteOpenHelper {
      */
     @Override
     public void onCreate(SQLiteDatabase db) {
-
+        db.execSQL("CREATE TABLE " + TB_NAME + " ( " + NAME + " TEXT, "
+                + URL + " TEXT, "
+                + INITIAL + " REAL, "
+                + CURRENT + " REAL" +" )");
     }
 
     /**
@@ -55,6 +67,45 @@ public class ItemDatabase extends SQLiteOpenHelper {
      */
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        db.execSQL("DROP TABLE IF EXISTS " + TB_NAME);
+        onCreate(db);
+    }
 
+    public void addItem(Item item) {
+        SQLiteDatabase db = getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(NAME, item.getName());
+        contentValues.put(URL, item.getURL());
+        contentValues.put(INITIAL, item.getInitialPrice());
+        contentValues.put(CURRENT, item.getCurrentPrice());
+        db.insert(TB_NAME, null, contentValues);
+    }
+
+    public void deleteItem(Item item) {
+        SQLiteDatabase db = getWritableDatabase();
+        db.execSQL("DELETE FROM " + TB_NAME + " WHERE " + URL + "=" + "'" + item.getURL() + "'");
+    }
+
+    public void editItem(Item item, String name, String url) {
+        SQLiteDatabase db = getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(NAME, name);
+        contentValues.put(URL, url);
+        db.update(TB_NAME, contentValues, URL + "=?", new String[]{item.getURL()});
+    }
+
+    public ArrayList<Item> getItems() {
+        ArrayList<Item> items = new ArrayList<>();
+        SQLiteDatabase db = getWritableDatabase();
+        Cursor data = db.rawQuery("SELECT * FROM " + TB_NAME, null);
+        if (data.getCount() == 0) {
+            return new ArrayList<>();
+        }
+        while (data.moveToNext()) {
+            items.add(new Item(data.getString(0), data.getString(1),
+                    data.getDouble(2), data.getDouble(3)));
+        }
+        data.close();
+        return items;
     }
 }

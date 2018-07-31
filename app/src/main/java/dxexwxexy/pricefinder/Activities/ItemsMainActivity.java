@@ -132,13 +132,17 @@ public class ItemsMainActivity extends AppCompatActivity {
             AlertDialog dialog = mBuilder.create();
             dialog.show();
             add.setOnClickListener(v -> {
-               if(name.getText().toString().matches("") || url.getText().toString().matches("") ){
-                   Toast.makeText(this, "Fields missing", Toast.LENGTH_SHORT).show();
-               } else {
-                   itemManager.addItem(new Item(name.getText().toString(), url.getText().toString()));
-                   dialog.dismiss();
-                   itemManager.notifyDataSetChanged();
-               }
+                String ebay = "\\S+\\.ebay\\.\\S+";
+                String amazon = "\\S+\\.amazon\\.\\S+";
+                if(name.getText().toString().matches("") || url.getText().toString().matches("") ){
+                    Toast.makeText(this, "Fields missing", Toast.LENGTH_SHORT).show();
+                } else if (url.getText().toString().matches(ebay) || url.getText().toString().matches(amazon)){
+                    itemManager.addItem(new Item(name.getText().toString(), url.getText().toString()));
+                    dialog.dismiss();
+                    itemManager.notifyDataSetChanged();
+                } else {
+                    Toast.makeText(this, "Invalid URL", Toast.LENGTH_SHORT).show();
+                }
             });
         });
         refreshLayout = findViewById(R.id.swipe_refresh);

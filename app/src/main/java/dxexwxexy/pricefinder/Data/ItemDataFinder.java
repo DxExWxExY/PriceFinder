@@ -3,10 +3,12 @@ package dxexwxexy.pricefinder.Data;
 import android.os.Handler;
 import android.os.Message;
 
+import org.jsoup.HttpStatusException;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -24,9 +26,7 @@ public class ItemDataFinder {
 
     ItemDataFinder(String url) {
         this.url = url;
-        // TODO: 7/27/2018 undo hardcode
         setStore();
-        System.out.println(store);
         handler = new Handler(msg -> {
             if (fetched) {
                 currentPrice = (double) msg.obj;
@@ -55,6 +55,8 @@ public class ItemDataFinder {
         } else if (url.matches("\\S+" + EBAY + "\\S+")) {
             System.out.println("set to ebay");
             this.store = "ebay";
+        } else {
+            this.store = "Unknown";
         }
     }
 
@@ -75,7 +77,8 @@ public class ItemDataFinder {
                     message.obj = Double.parseDouble(matcher.group(0).substring(1));
                 }
                 handler.sendMessage(message);
-            } catch (IOException e) {
+            } catch (Exception e) {
+                fetched = true;
                 e.printStackTrace();
             }
         }).start();
@@ -85,14 +88,15 @@ public class ItemDataFinder {
         if (fetched) {
             return initialPrice;
         }
-        return -1.0;
+        return 0;
     }
 
     public double getCurrentPrice() {
         if (fetched) {
+            fetchPrices();
             return currentPrice;
         }
-        return -1.0;
+        return 0;
     }
 
     public boolean isFetched() {

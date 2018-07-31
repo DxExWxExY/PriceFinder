@@ -15,12 +15,12 @@ import java.util.regex.Pattern;
 public class JsoupTest {
     public static void main(String[] args) {
         new Thread(() -> {
-            String url = "https://www.ebay.com/itm/iPhone-7-Plus-32GB-Verizon/253785012080?hash=item3b16c3f770%3Ag%3AYP8AAOSw0URbXmo~&LH_Auction=1&_sacat=0&_nkw=iphone&_from=R40&rt=nc";
+            String url = "dfkjdshfj";
             Document document = null;
             try {
                 document = Jsoup.connect(url).get();
-            } catch (IOException e) {
-                e.printStackTrace();
+            } catch (IOException | IllegalArgumentException e) {
+//                e.printStackTrace();
             }
             String question = document.select(".notranslate").first().text();
             Pattern pattern = Pattern.compile("\\$\\d+\\.\\d+");
