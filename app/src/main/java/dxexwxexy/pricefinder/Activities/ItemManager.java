@@ -82,11 +82,14 @@ public class ItemManager extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                         done.setOnClickListener(e -> {
                             String ebay = "\\S+\\.ebay\\.\\S+";
                             String amazon = "\\S+\\.amazon\\.\\S+";
+                            String utep = "\\S+\\.utep\\.\\S+";
                             if (!editName.getText().toString().matches("")) {
-                                if (editURL.getText().toString().matches(ebay) || editURL.getText().toString().matches(amazon)) {
+                                if (editURL.getText().toString().matches(ebay) || editURL.getText().toString().matches(amazon) ||
+                                        editURL.getText().toString().matches(utep)) {
                                     itemDatabase.editItem(edit, editName.getText().toString(), editURL.getText().toString());
                                     edit.setName(editName.getText().toString());
                                     edit.setURL(editURL.getText().toString());
+                                    edit.setSelected(false);
                                     notifyDataSetChanged();
                                     dialog.dismiss();
                                 } else {
