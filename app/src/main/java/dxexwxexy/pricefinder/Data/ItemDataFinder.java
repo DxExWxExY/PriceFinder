@@ -80,7 +80,7 @@ public class ItemDataFinder {
                 getFromStore(EBAY_ID);
                 break;
             default:
-                currentPrice = 0;
+                getFromStore("Unknown");
                 break;
         }
     }
@@ -104,6 +104,20 @@ public class ItemDataFinder {
     private void getFromStore(String identifier) {
         new Thread(() -> {
             try {
+
+                if( identifier.equals("Unknown")){
+                    Message message = new Message();
+                    Document document = Jsoup.connect(url).get();
+                    String question = document.toString();
+                    Pattern pattern = Pattern.compile("\\$\\d+\\.\\d+");
+                    Matcher matcher = pattern.matcher(question);
+                    if (matcher.find()) {
+                        message.obj = Double.parseDouble(matcher.group(0).substring(1));
+                    }
+
+                    return;
+                }
+
                 Message message = new Message();
                 Document document = Jsoup.connect(url).get();
                 String question = document.select(identifier).first().text();
@@ -112,6 +126,8 @@ public class ItemDataFinder {
                 if (matcher.find()) {
                     message.obj = Double.parseDouble(matcher.group(0).substring(1));
                 }
+
+
                 handler.sendMessage(message);
             } catch (IllegalArgumentException | NullPointerException | IOException e) {
                 Message message = new Message();

@@ -87,7 +87,8 @@ public class ItemsMainActivity extends AppCompatActivity {
                 handler.sendMessage(message);
             });
             updater.start();
-        } else {
+        } else if (updater.getState() == Thread.State.NEW)
+        {
             updater.start();
         }
 
@@ -142,9 +143,10 @@ public class ItemsMainActivity extends AppCompatActivity {
             add.setOnClickListener(v -> {
                 String ebay = "\\S+\\.ebay\\.\\S+";
                 String amazon = "\\S+\\.amazon\\.\\S+";
+                String utep = "\\S+\\.utep\\.\\S+";
                 if (name.getText().toString().matches("") || url.getText().toString().matches("")) {
                     Toast.makeText(this, "Fields missing", Toast.LENGTH_SHORT).show();
-                } else if (url.getText().toString().matches(ebay) || url.getText().toString().matches(amazon)) {
+                } else if (url.getText().toString().matches(ebay) || url.getText().toString().matches(amazon)|| url.getText().toString().matches(utep)) {
                     itemManager.addItem(new Item(name.getText().toString(), url.getText().toString()));
                     dialog.dismiss();
                     itemManager.notifyDataSetChanged();

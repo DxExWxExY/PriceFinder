@@ -176,8 +176,8 @@ public class ItemManager extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         content.name.setText(items.get(position).getName());
         content.initialPrice.setText("$"+items.get(position).getInitialPrice());
         content.currentPrice.setText("$"+items.get(position).getCurrentPrice());
-        content.itemIcon.setImageResource(items.get(position).getStore().equals("amazon") ?
-                R.drawable.ic_amazon : R.drawable.ic_ebay);
+//        content.itemIcon.setImageResource(items.get(position).getStore().equals("amazon") ?
+//                R.drawable.ic_amazon : R.drawable.ic_ebay);
         if (Integer.parseInt(items.get(position).getDifference()) <= 0) {
             content.difference.setBackgroundColor(context.getColor(R.color.green));
             content.difference.setText(items.get(position).getDifference()+"%");
