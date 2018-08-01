@@ -112,18 +112,14 @@ public class Item implements Parcelable, Comparable<Item> {
     }
 
     public boolean isFetched() {
-        if (store.equals("Unknown")) {
-            return true;
-        } else {
-            return itemDataFinder.isFetched();
-        }
+        return itemDataFinder.isFetched();
     }
 
     /**
      * Updates item current price using ItemDataFinder.
      */
     public void updateCurrentPrice() {
-        if (initialPrice == 0) {
+        if (initialPrice == 0.0) {
             this.initialPrice = itemDataFinder.getInitialPrice();
         }
         this.currentPrice = itemDataFinder.getCurrentPrice();

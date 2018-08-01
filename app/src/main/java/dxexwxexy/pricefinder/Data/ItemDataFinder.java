@@ -80,17 +80,15 @@ public class ItemDataFinder {
                 getFromStore(EBAY_ID);
                 break;
             default:
-                currentPrice = 0;
+                getFromStore("utep");
                 break;
         }
     }
 
     private void setStore() {
         if (url.matches("\\S+" + AMAZON + "\\S+")) {
-            System.out.println("set to amazon");
             this.store = "amazon";
         } else if (url.matches("\\S+" + EBAY + "\\S+")) {
-            System.out.println("set to ebay");
             this.store = "ebay";
         } else {
             this.store = "Unknown";
@@ -106,7 +104,12 @@ public class ItemDataFinder {
             try {
                 Message message = new Message();
                 Document document = Jsoup.connect(url).get();
-                String question = document.select(identifier).first().text();
+                String question;
+                if (identifier.equals("utep")) {
+                    question = document.toString();
+                } else {
+                    question = document.select(identifier).first().text();
+                }
                 Pattern pattern = Pattern.compile("\\$\\d+\\.\\d+");
                 Matcher matcher = pattern.matcher(question);
                 if (matcher.find()) {

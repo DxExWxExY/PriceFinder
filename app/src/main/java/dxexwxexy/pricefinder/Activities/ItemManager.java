@@ -236,6 +236,7 @@ public class ItemManager extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         new Thread(() -> {
             while (!item.isFetched());
             item.updateCurrentPrice();
+            Log.d("===================", item.toString());
             itemDatabase.addItem(item);
         }).start();
     }

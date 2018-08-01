@@ -111,6 +111,9 @@ public class ItemsMainActivity extends AppCompatActivity {
             case R.id.sort_diff:
                 itemManager.sort(2);
                 return true;
+            case R.id.sort_store:
+                itemManager.sort(3);
+                return true;
         }
         return false;
     }
@@ -142,9 +145,11 @@ public class ItemsMainActivity extends AppCompatActivity {
             add.setOnClickListener(v -> {
                 String ebay = "\\S+\\.ebay\\.\\S+";
                 String amazon = "\\S+\\.amazon\\.\\S+";
+                String utep = "\\S+\\.utep\\.\\S+";
                 if (name.getText().toString().matches("") || url.getText().toString().matches("")) {
                     Toast.makeText(this, "Fields missing", Toast.LENGTH_SHORT).show();
-                } else if (url.getText().toString().matches(ebay) || url.getText().toString().matches(amazon)) {
+                } else if (url.getText().toString().matches(ebay) || url.getText().toString().matches(amazon) ||
+                        url.getText().toString().matches(utep)) {
                     itemManager.addItem(new Item(name.getText().toString(), url.getText().toString()));
                     dialog.dismiss();
                     itemManager.notifyDataSetChanged();
