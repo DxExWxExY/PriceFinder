@@ -35,7 +35,7 @@ public class ItemsMainActivity extends AppCompatActivity {
     /***
      * Fields used for UI manipulation.
      */
-    FloatingActionButton addItem;
+    private FloatingActionButton addItem;
     private SwipeRefreshLayout refreshLayout;
     private ProgressBar loading;
     private ItemManager itemManager;
@@ -55,42 +55,6 @@ public class ItemsMainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         initRecyclerView(null);
         initUI();
-    }
-
-    public void initUpdating() {
-        itemManager.resetFetch();
-        handler = new Handler(msg -> {
-            if (msg.arg1 == 1) {
-                refreshLayout.setVisibility(View.VISIBLE);
-                loading.setVisibility(View.INVISIBLE);
-                itemManager.refresh();
-            } else {
-                refreshLayout.setVisibility(View.INVISIBLE);
-                loading.setVisibility(View.VISIBLE);
-            }
-            return true;
-        });
-        if (updater == null) {
-            updater = new Thread(() -> {
-                while (!itemManager.isFetched()) {
-                    Message message = new Message();
-                    message.arg1 = 0;
-                    handler.sendMessage(message);
-                    try {
-                        Thread.sleep(200);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
-                Message message = new Message();
-                message.arg1 = 1;
-                handler.sendMessage(message);
-            });
-            updater.start();
-        } else {
-            updater.start();
-        }
-
     }
 
     @Override
@@ -116,6 +80,26 @@ public class ItemsMainActivity extends AppCompatActivity {
                 return true;
         }
         return false;
+    }
+
+    /***
+     * {@inheritDoc}
+     * @param outState
+     */
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putParcelableArrayList("items", itemManager.getItems());
+    }
+
+    /***
+     * {@inheritDoc}
+     * @param savedInstanceState
+     */
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        initRecyclerView(savedInstanceState.getParcelableArrayList("items"));
     }
 
     /**
@@ -175,24 +159,39 @@ public class ItemsMainActivity extends AppCompatActivity {
         });
     }
 
-    /***
-     * {@inheritDoc}
-     * @param outState
-     */
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putParcelableArrayList("items", itemManager.getItems());
-    }
+    public void initUpdating() {
+        handler = new Handler(msg -> {
+            if (msg.arg1 == 1) {
+                refreshLayout.setVisibility(View.VISIBLE);
+                loading.setVisibility(View.INVISIBLE);
+                itemManager.refresh();
+            } else {
+                refreshLayout.setVisibility(View.INVISIBLE);
+                loading.setVisibility(View.VISIBLE);
+            }
+            return true;
+        });
+        if (updater == null) {
+            updater = new Thread(() -> {
+                while (!itemManager.isFetched()) {
+                    Message message = new Message();
+                    message.arg1 = 0;
+                    handler.sendMessage(message);
+                    try {
+                        Thread.sleep(200);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+                Message message = new Message();
+                message.arg1 = 1;
+                handler.sendMessage(message);
+            });
+            updater.start();
+        } else {
+            updater.start();
+        }
 
-    /***
-     * {@inheritDoc}
-     * @param savedInstanceState
-     */
-    @Override
-    protected void onRestoreInstanceState(Bundle savedInstanceState) {
-        super.onRestoreInstanceState(savedInstanceState);
-        initRecyclerView(savedInstanceState.getParcelableArrayList("items"));
     }
 
     public void disableRefresh() {

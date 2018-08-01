@@ -284,10 +284,6 @@ public class ItemManager extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         return fetchDone;
     }
 
-    public void resetFetch() {
-
-    }
-
     /**
      * Instance used by RecyclerViewer.
      */

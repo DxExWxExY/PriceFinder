@@ -20,9 +20,7 @@ public class ItemDataFinder {
     private Handler handler;
     private boolean fetched;
     private static final String AMAZON_ID = ".a-section .a-spacing-none";
-    private static final String AMAZON = "amazon";
     private static final String EBAY_ID = ".notranslate";
-    private static final String EBAY = "ebay";
 
     ItemDataFinder(String url) {
         this.url = url;
@@ -73,10 +71,10 @@ public class ItemDataFinder {
 
     private void fetchPrices() {
         switch (store) {
-            case AMAZON:
+            case "amazon":
                 getFromStore(AMAZON_ID);
                 break;
-            case EBAY:
+            case "ebay":
                 getFromStore(EBAY_ID);
                 break;
             default:
@@ -86,9 +84,9 @@ public class ItemDataFinder {
     }
 
     private void setStore() {
-        if (url.matches("\\S+" + AMAZON + "\\S+")) {
+        if (url.matches("\\S+" + "amazon" + "\\S+")) {
             this.store = "amazon";
-        } else if (url.matches("\\S+" + EBAY + "\\S+")) {
+        } else if (url.matches("\\S+" + "ebay" + "\\S+")) {
             this.store = "ebay";
         } else {
             this.store = "utep";
