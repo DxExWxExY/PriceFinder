@@ -91,7 +91,7 @@ public class ItemDataFinder {
         } else if (url.matches("\\S+" + EBAY + "\\S+")) {
             this.store = "ebay";
         } else {
-            this.store = "Unknown";
+            this.store = "utep";
         }
     }
 

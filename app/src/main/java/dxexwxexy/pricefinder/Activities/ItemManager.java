@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.support.annotation.DrawableRes;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AlertDialog;
@@ -176,8 +177,6 @@ public class ItemManager extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         content.name.setText(items.get(position).getName());
         content.initialPrice.setText("$"+items.get(position).getInitialPrice());
         content.currentPrice.setText("$"+items.get(position).getCurrentPrice());
-        content.itemIcon.setImageResource(items.get(position).getStore().equals("amazon") ?
-                R.drawable.ic_amazon : R.drawable.ic_ebay);
         if (Integer.parseInt(items.get(position).getDifference()) <= 0) {
             content.difference.setBackgroundColor(context.getColor(R.color.green));
             content.difference.setText(items.get(position).getDifference()+"%");
@@ -236,7 +235,6 @@ public class ItemManager extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         new Thread(() -> {
             while (!item.isFetched());
             item.updateCurrentPrice();
-            Log.d("===================", item.toString());
             itemDatabase.addItem(item);
         }).start();
     }
@@ -319,6 +317,17 @@ public class ItemManager extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
         void setItem(Item item) {
             this.item = item;
+            switch (item.getStore()) {
+                case "amazon":
+                    this.itemIcon.setImageResource(R.drawable.ic_amazon);
+                    break;
+                case "ebay":
+                    this.itemIcon.setImageResource(R.drawable.ic_ebay);
+                    break;
+                case "utep":
+                    this.itemIcon.setImageResource(R.drawable.ic_utep);
+                    break;
+            }
         }
     }
 }
