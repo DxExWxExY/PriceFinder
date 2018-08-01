@@ -164,8 +164,8 @@ public class ItemsMainActivity extends AppCompatActivity {
         }
         refreshLayout.setOnRefreshListener(() -> {
             refreshLayout.setRefreshing(true);
-            itemManager.refresh();
             initUpdating();
+            itemManager.refresh();
             refreshLayout.setRefreshing(false);
         });
     }

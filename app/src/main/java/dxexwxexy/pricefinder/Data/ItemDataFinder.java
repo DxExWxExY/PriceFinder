@@ -48,7 +48,7 @@ public class ItemDataFinder {
         fetchPrices();
     }
 
-    public ItemDataFinder(String url, double initialPrice) {
+    ItemDataFinder(String url, double initialPrice) {
         this.url = url;
         this.initialPrice = initialPrice;
         setStore();

@@ -12,6 +12,6 @@
         android:id="@+id/sort_diff"
         android:title="Sort by Difference" />
     <item
-        android:id="@+id/exit"
-        android:title="Exit" />
+        android:id="@+id/sort_store"
+        android:title="Sort by Store" />
 </menu>

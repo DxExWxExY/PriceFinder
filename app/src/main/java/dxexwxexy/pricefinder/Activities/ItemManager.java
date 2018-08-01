@@ -271,6 +271,8 @@ public class ItemManager extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             case 2:
                 Collections.sort(items, Item.COMPARE_BY_DIFF);
                 break;
+            case 3:
+                Collections.sort(items, Item.COMPARE_BY_STORE);
         }
         notifyDataSetChanged();
     }
